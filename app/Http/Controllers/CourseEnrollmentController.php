@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CountryRankings;
 use App\Models\Course;
 use App\Models\CourseEnrollment;
+use App\Models\Rankings;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\RedirectResponse;
 
@@ -11,6 +13,7 @@ class CourseEnrollmentController extends Controller
 {
     public function show(string $courseSlug): Renderable
     {
+        $user = auth()->user();
         /** @var Course $course */
         $course = Course::query()->where('slug', $courseSlug)->firstOrFail();
 
@@ -18,14 +21,18 @@ class CourseEnrollmentController extends Controller
         $enrollment = CourseEnrollment::query()
             ->with('course.lessons')
             ->where('course_id', $course->id)
-            ->where('user_id', auth()->id())
+            ->where('user_id', $user->id)
             ->first();
 
         if ($enrollment === null) {
             return view('courses.show', ['course' => $course]);
         }
 
-        return view('courseEnrollments.show', ['enrollment' => $enrollment]);
+        return view('courseEnrollments.show', [
+            'enrollment' => $enrollment,
+            'countryRanking' => (new CountryRankings($user, $course))->get(),
+            'worldRanking' => (new Rankings($user, $course))->get()
+        ]);
     }
 
     public function store(string $courseSlug): RedirectResponse
