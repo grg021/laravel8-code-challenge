@@ -37,7 +37,7 @@ class BottomSectionTest extends TestCase
             ['3', '1'],
         ];
 
-        $actual = $query->bottomTier()->list();
+        $actual = $query->bottomTier()->getSectionItems();
 
         $this->assertSameSize($expectedValues, $actual);
 
@@ -74,7 +74,7 @@ class BottomSectionTest extends TestCase
             ['3', '1'],
         ];
 
-        $actual = $query->bottomTier()->list();
+        $actual = $query->bottomTier()->getSectionItems();
 
         $this->assertSameSize($expectedValues, $actual);
 
@@ -93,14 +93,14 @@ class BottomSectionTest extends TestCase
 
         $query = new UserRankingsBuilder($course);
 
-        $this->assertEquals(collect([]), $query->bottomTier()->list());
+        $this->assertEquals(collect([]), $query->bottomTier()->getSectionItems());
 
         $this->makeQuizAnswer(1, $quiz, 1);
-        $this->assertEquals(collect([]), $query->bottomTier()->list());
+        $this->assertEquals(collect([]), $query->bottomTier()->getSectionItems());
 
         $this->makeQuizAnswer(2, $quiz, 1);
         $this->makeQuizAnswer(3, $quiz, 1);
-        $this->assertEquals(collect([]), $query->bottomTier()->list());
+        $this->assertEquals(collect([]), $query->bottomTier()->getSectionItems());
     }
 
     /** @test */

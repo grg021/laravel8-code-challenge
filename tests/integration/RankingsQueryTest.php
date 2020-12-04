@@ -5,7 +5,7 @@ namespace Tests\integration;
 use App\Models\Country;
 use App\Models\Course;
 use App\Models\User;
-use App\Api\UserRankingsBuilder;
+use App\Query\UserRankingsQuery;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
 
@@ -25,7 +25,8 @@ class RankingsQueryTest extends TestCase
         $this->makeQuizAnswer(3, $quiz, 7);
         $this->makeQuizAnswer(2, $quiz, 5);
 
-        $query = new UserRankingsBuilder($course);
+        $query = new UserRankingsQuery();
+        $query->course($course->id);
 
         $expectedValues = [
             ['3', '7'],
@@ -33,11 +34,11 @@ class RankingsQueryTest extends TestCase
             ['1', '1'],
         ];
 
-        $this->checkValues($query->list(), $expectedValues);
+        $this->checkValues($query->get(), $expectedValues);
     }
 
     /** @test */
-    public function it_returns_a_collection_of_userid_and_points_of_a_course_by_country_sorted_by_points()
+    public function it_can_be_filtered_by_counrtry_code_of_user()
     {
         $course = Course::factory()->create();
         $quiz = $this->makeQuiz($course);
@@ -58,44 +59,16 @@ class RankingsQueryTest extends TestCase
         $this->makeQuizAnswer(6, $quiz, 7);
         $this->makeQuizAnswer(5, $quiz, 5);
 
-        $query = new UserRankingsBuilder($course, $countryCodes[1]);
+        $query = new UserRankingsQuery();
+        $query->country($countryCodes[1]);
 
         $expectedValues = [
             ['6', '7'],
             ['5', '5'],
             ['4', '1'],
         ];
-        $this->assertSameSize($expectedValues, $query->list());
-        $this->checkValues($query->list(), $expectedValues);
+        $this->assertEquals(3, $query->get()->count());
+        $this->checkValues($query->get(), $expectedValues);
     }
 
-    /** @test */
-    public function it_puts_higher_priority_for_logged_in_user_when_score_is_the_same()
-    {
-        $course = Course::factory()->create();
-        $quiz = $this->makeQuiz($course);
-
-        $user = User::factory()->create();
-        auth()->login($user);
-        User::factory()->count(4)->create();
-
-        $this->makeQuizAnswer(3, $quiz, 1);
-        $this->makeQuizAnswer(2, $quiz, 7);
-        $this->makeQuizAnswer(4, $quiz, 7);
-        $this->makeQuizAnswer(1, $quiz, 7);
-        $this->makeQuizAnswer(5, $quiz, 10);
-
-        $query = new UserRankingsBuilder($course);
-
-        $expectedValues = [
-            ['5', '10'],
-            ['1', '7']
-        ];
-
-        $this->checkValues($query->topTier()->list(), $expectedValues);
-
-        $query = new UserRankingsBuilder($course);
-
-        $this->checkValues($query->bottomTier()->list(), $expectedValues);
-    }
 }

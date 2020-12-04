@@ -10,7 +10,6 @@ use Tests\TestCase;
 
 class TopTierSectionTest extends TestCase
 {
-
     use DatabaseMigrations;
 
     /** @test */
@@ -23,7 +22,7 @@ class TopTierSectionTest extends TestCase
 
         $query = new UserRankingsBuilder($course);
 
-        $this->assertEquals(collect([]), $query->topTier()->list());
+        $this->assertEquals(collect([]), $query->topTier()->getSectionItems());
 
         $this->makeQuizAnswer(1, $quiz, 1);
 
@@ -32,7 +31,7 @@ class TopTierSectionTest extends TestCase
         ];
 
         $query = new UserRankingsBuilder($course);
-        $this->checkValues($query->topTier()->list(), $expectedValues);
+        $this->checkValues($query->topTier()->getSectionItems(), $expectedValues);
 
         $this->makeQuizAnswer(2, $quiz, 5);
 
@@ -41,7 +40,7 @@ class TopTierSectionTest extends TestCase
             ['1', '1'],
         ];
         $query = new UserRankingsBuilder($course);
-        $this->checkValues($query->topTier()->list(), $expectedValues);
+        $this->checkValues($query->topTier()->getSectionItems(), $expectedValues);
 
         $this->makeQuizAnswer(3, $quiz, 7);
 
@@ -51,7 +50,7 @@ class TopTierSectionTest extends TestCase
             ['1', '1'],
         ];
         $query = new UserRankingsBuilder($course);
-        $this->checkValues($query->topTier()->list(), $expectedValues);
+        $this->checkValues($query->topTier()->getSectionItems(), $expectedValues);
     }
 
     /** @test */
@@ -79,7 +78,7 @@ class TopTierSectionTest extends TestCase
             ['2', '5'],
         ];
 
-        $actual = $query->topTier()->list();
+        $actual = $query->topTier()->getSectionItems();
 
         $this->assertCount(4, $actual);
 
@@ -113,7 +112,7 @@ class TopTierSectionTest extends TestCase
             ['2', '5'],
         ];
 
-        $actual = $query->topTier()->list();
+        $actual = $query->topTier()->getSectionItems();
 
         $this->assertSameSize($expectedValues, $actual);
 
@@ -145,11 +144,10 @@ class TopTierSectionTest extends TestCase
             ['6', '7'],
         ];
 
-        $actual = $query->topTier()->list();
+        $actual = $query->topTier()->getSectionItems();
 
         $this->assertSameSize($expectedValues, $actual);
 
         $this->checkValues($actual, $expectedValues);
     }
-
 }

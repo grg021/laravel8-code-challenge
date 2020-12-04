@@ -3,7 +3,7 @@
 use Illuminate\Support\Collection;
 
 if (! function_exists('rank')) {
-    function rank(Collection $data) : Collection
+    function rank(Collection $data): Collection
     {
         $prevScore = -1;
         $rank = 0;

@@ -2,9 +2,6 @@
 
 namespace App\Api;
 
-use App\Models\Course;
-use App\Query\UserRankingsQuery;
-use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Collection;
 
 class UserRankingsBuilder implements SectionsBuilder
@@ -12,42 +9,40 @@ class UserRankingsBuilder implements SectionsBuilder
     private const MIN_SIZE = 3;
     private const MAX_SIZE = 9;
 
-    private UserRankingsQuery $rankings;
-    private ?Authenticatable $user;
     private Collection $rankItems;
     private Collection $sections;
+    private Collection $sectionItems;
     private int $size = self::MAX_SIZE;
+    private int $userId;
 
-    public function __construct(Course $course, $countryCode = null)
+    public function __construct(Collection $rankings, int $userId)
     {
-        $this->rankings = new UserRankingsQuery();
-        $this->rankings->course($course->id);
-        if ($countryCode) {
-            $this->rankings->country($countryCode);
-        }
-        $this->user = auth()->user();
         $this->sections = collect([]);
-        $this->rankItems = collect([]);
-        $this->rankItems = $this->rankings->get();
+        $this->sectionItems = collect([]);
+        $this->rankItems = $rankings;
+        $this->userId = $userId;
     }
 
-    public function initialize()
+    public function initialize(Collection $rankings)
     {
-        $this->rankItems = $this->rankings->get();
+        $this->sections = collect([]);
+        $this->sectionItems = collect([]);
+        $this->rankItems = $rankings;
+        return $this;
     }
 
     public function build()
     {
         // build top section
-        $topList = $this->topTier()->list();
+        $topList = $this->topTier()->getSectionItems();
         $this->sections->push($topList);
         $this->removeItemsFromList($topList);
 
         // build bottom first then check if middle section is needed
-        $bottomList = $this->bottomTier()->list();
+        $bottomList = $this->bottomTier()->getSectionItems();
         $this->removeItemsFromList($bottomList);
 
-        $middleList = $this->middleTier()->list();
+        $middleList = $this->middleTier()->getSectionItems();
         $this->sections->push($middleList);
         $this->sections->push($bottomList);
         return $this;
@@ -68,9 +63,12 @@ class UserRankingsBuilder implements SectionsBuilder
         });
     }
 
-    public function list(): Collection
+    public function getSectionItems(): Collection
     {
-        return $this->prioritizeUserIfSameRank()->values();
+        $this->getSectionList()
+            ->highlightUser()
+            ->prioritizeUserIfSameRank();
+        return $this->sectionItems;
     }
 
     public function topTier(): UserRankingsBuilder
@@ -101,7 +99,7 @@ class UserRankingsBuilder implements SectionsBuilder
 
     private function setSectionSize()
     {
-        $this->size = ($this->rankings->count() <= self::MIN_SIZE || !$this->user)
+        $this->size = ($this->rankItems->count() <= self::MIN_SIZE)
             ? self::MIN_SIZE
             : $this->getSizeBasedOnUserPosition(self::MIN_SIZE);
     }
@@ -117,11 +115,8 @@ class UserRankingsBuilder implements SectionsBuilder
 
     protected function getUserPosition($list)
     {
-        if (!$this->user) {
-            return -1;
-        }
         return $list->search(function ($item) {
-            return $item->user_id == $this->user->id;
+            return $item->user_id == $this->userId;
         });
     }
 
@@ -133,9 +128,9 @@ class UserRankingsBuilder implements SectionsBuilder
     /**
      * @return Collection
      */
-    protected function prioritizeUserIfSameRank(): Collection
+    protected function prioritizeUserIfSameRank()
     {
-        $list = $this->rankItems->take($this->size)->sortBy('rank')->values();
+        $list = $this->sectionItems;
 
         $pos = $this->getUserPosition($list);
 
@@ -149,6 +144,31 @@ class UserRankingsBuilder implements SectionsBuilder
                 $list->splice($dups->keys()->first(), 0, [$rankItem]);
             }
         }
-        return $list;
+        $this->sectionItems = $list;
+        return $this;
+    }
+
+    private function highlightUser()
+    {
+        $list = $this->sectionItems;
+
+        $pos = $this->getUserPosition($list);
+
+        if ($pos > -1) {
+            $rankItem = $list[$pos];
+            $rankItem->highlight = 1;
+            $list->splice($pos, 1, [$rankItem]);
+        }
+        $this->sectionItems = $list;
+        return $this;
+    }
+
+    /**
+     * @return Collection
+     */
+    protected function getSectionList()
+    {
+        $this->sectionItems = $this->rankItems->take($this->size)->sortBy('rank')->values();
+        return $this;
     }
 }

@@ -3,8 +3,6 @@
 
 namespace App\Query;
 
-
-use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
@@ -21,10 +19,6 @@ class UserRankingsQuery
             ->join('users', 'quiz_answers.user_id', '=', 'users.id');
     }
 
-    public function query(): Builder
-    {
-        return $this->query;
-    }
 
     public function course($courseId)
     {
@@ -38,15 +32,10 @@ class UserRankingsQuery
         return $this;
     }
 
-    public function count()
-    {
-        return $this->query->get()->count();
-    }
-
     public function get(): Collection
     {
         return rank($this->query
-            ->selectRaw('sum(score) as points, quiz_answers.user_id')
+            ->selectRaw('sum(score) as points, quiz_answers.user_id, 0 as highlight')
             ->groupBy('quiz_answers.user_id')
             ->orderBy('points', 'desc')
             ->get());

@@ -8,17 +8,16 @@ class RankItem extends Model
 {
 
     private $data;
-    private $user;
 
     public function __construct($data)
     {
         $this->data = $data;
-        $this->user = auth()->user();
     }
 
     public function getTitleAttribute()
     {
-        return User::findOrFail($this->data->user_id)->name;
+        $user = User::find($this->data->user_id);
+        return ($user) ? $user->name : '';
     }
 
     public function getSubtitleAttribute()
@@ -28,12 +27,7 @@ class RankItem extends Model
 
     public function getHighlightAttribute()
     {
-
-        if (!$this->user) {
-            return 0;
-        }
-
-        return ($this->user->id == $this->data->user_id) ? 1 : 0;
+        return $this->data->highlight;
     }
 
     public function getRankAttribute()

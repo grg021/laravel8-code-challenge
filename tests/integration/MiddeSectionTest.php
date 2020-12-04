@@ -38,7 +38,7 @@ class MiddeSectionTest extends TestCase
             ['1', '2'],
         ];
 
-        $actual = $query->middleTier()->list();
+        $actual = $query->middleTier()->getSectionItems();
 
         $this->assertSameSize($expectedValues, $actual);
 
