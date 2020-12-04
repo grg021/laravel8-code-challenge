@@ -5,7 +5,7 @@ namespace Tests\integration;
 use App\Models\Country;
 use App\Models\Course;
 use App\Models\User;
-use App\Query\UserRankSections;
+use App\Api\UserRankingsBuilder;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
 
@@ -25,7 +25,7 @@ class RankingsQueryTest extends TestCase
         $this->makeQuizAnswer(3, $quiz, 7);
         $this->makeQuizAnswer(2, $quiz, 5);
 
-        $query = new UserRankSections($course);
+        $query = new UserRankingsBuilder($course);
 
         $expectedValues = [
             ['3', '7'],
@@ -58,7 +58,7 @@ class RankingsQueryTest extends TestCase
         $this->makeQuizAnswer(6, $quiz, 7);
         $this->makeQuizAnswer(5, $quiz, 5);
 
-        $query = new UserRankSections($course, $countryCodes[1]);
+        $query = new UserRankingsBuilder($course, $countryCodes[1]);
 
         $expectedValues = [
             ['6', '7'],
@@ -85,7 +85,7 @@ class RankingsQueryTest extends TestCase
         $this->makeQuizAnswer(1, $quiz, 7);
         $this->makeQuizAnswer(5, $quiz, 10);
 
-        $query = new UserRankSections($course);
+        $query = new UserRankingsBuilder($course);
 
         $expectedValues = [
             ['5', '10'],
@@ -94,7 +94,7 @@ class RankingsQueryTest extends TestCase
 
         $this->checkValues($query->topTier()->list(), $expectedValues);
 
-        $query = new UserRankSections($course);
+        $query = new UserRankingsBuilder($course);
 
         $this->checkValues($query->bottomTier()->list(), $expectedValues);
     }

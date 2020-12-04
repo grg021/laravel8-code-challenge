@@ -2,15 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Api\UserRankingsBuilder;
 use App\Models\CountryRankings;
 use App\Models\Course;
 use App\Models\CourseEnrollment;
-use App\Models\Rankings;
+use App\Models\RankItem;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\RedirectResponse;
 
 class CourseEnrollmentController extends Controller
 {
+
     public function show(string $courseSlug): Renderable
     {
         $user = auth()->user();
@@ -28,10 +30,14 @@ class CourseEnrollmentController extends Controller
             return view('courses.show', ['course' => $course]);
         }
 
+
+        $builder = new UserRankingsBuilder($course);
+
+
         return view('courseEnrollments.show', [
             'enrollment' => $enrollment,
             'countryRanking' => (new CountryRankings($user, $course))->get(),
-            'worldRanking' => (new Rankings($user, $course))->get()
+            'worldRanking' => $builder->build()->transform(RankItem::class)->get()
         ]);
     }
 

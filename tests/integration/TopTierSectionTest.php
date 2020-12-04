@@ -4,7 +4,7 @@ namespace Tests\integration;
 
 use App\Models\Course;
 use App\Models\User;
-use App\Query\UserRankSections;
+use App\Api\UserRankingsBuilder;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
 
@@ -21,7 +21,7 @@ class TopTierSectionTest extends TestCase
 
         User::factory()->count(3)->create();
 
-        $query = new UserRankSections($course);
+        $query = new UserRankingsBuilder($course);
 
         $this->assertEquals(collect([]), $query->topTier()->list());
 
@@ -31,7 +31,7 @@ class TopTierSectionTest extends TestCase
             ['1', '1'],
         ];
 
-        $query = new UserRankSections($course);
+        $query = new UserRankingsBuilder($course);
         $this->checkValues($query->topTier()->list(), $expectedValues);
 
         $this->makeQuizAnswer(2, $quiz, 5);
@@ -40,7 +40,7 @@ class TopTierSectionTest extends TestCase
             ['2', '5'],
             ['1', '1'],
         ];
-        $query = new UserRankSections($course);
+        $query = new UserRankingsBuilder($course);
         $this->checkValues($query->topTier()->list(), $expectedValues);
 
         $this->makeQuizAnswer(3, $quiz, 7);
@@ -50,7 +50,7 @@ class TopTierSectionTest extends TestCase
             ['2', '5'],
             ['1', '1'],
         ];
-        $query = new UserRankSections($course);
+        $query = new UserRankingsBuilder($course);
         $this->checkValues($query->topTier()->list(), $expectedValues);
     }
 
@@ -70,7 +70,7 @@ class TopTierSectionTest extends TestCase
         $this->makeQuizAnswer(4, $quiz, 9);
         $this->makeQuizAnswer(5, $quiz, 8);
 
-        $query = new UserRankSections($course);
+        $query = new UserRankingsBuilder($course);
 
         $expectedValues = [
             ['4', '9'],
@@ -103,7 +103,7 @@ class TopTierSectionTest extends TestCase
         $this->makeQuizAnswer(5, $quiz, 8);
         $this->makeQuizAnswer(6, $quiz, 7);
 
-        $query = new UserRankSections($course);
+        $query = new UserRankingsBuilder($course);
 
         $expectedValues = [
             ['4', '9'],
@@ -137,7 +137,7 @@ class TopTierSectionTest extends TestCase
         $this->makeQuizAnswer(5, $quiz, 8);
         $this->makeQuizAnswer(6, $quiz, 7);
 
-        $query = new UserRankSections($course);
+        $query = new UserRankingsBuilder($course);
 
         $expectedValues = [
             ['4', '9'],

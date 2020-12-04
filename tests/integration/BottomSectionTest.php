@@ -4,7 +4,7 @@ namespace Tests\integration;
 
 use App\Models\Course;
 use App\Models\User;
-use App\Query\UserRankSections;
+use App\Api\UserRankingsBuilder;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
 
@@ -29,7 +29,7 @@ class BottomSectionTest extends TestCase
         $this->makeQuizAnswer(7, $quiz, 10);
         $this->makeQuizAnswer(8, $quiz, 9);
 
-        $query = new UserRankSections($course);
+        $query = new UserRankingsBuilder($course);
 
         $expectedValues = [
             ['2', '6'],
@@ -65,7 +65,7 @@ class BottomSectionTest extends TestCase
         $this->makeQuizAnswer(7, $quiz, 10);
         $this->makeQuizAnswer(8, $quiz, 9);
 
-        $query = new UserRankSections($course);
+        $query = new UserRankingsBuilder($course);
 
         $expectedValues = [
             ['6', '7'],
@@ -91,7 +91,7 @@ class BottomSectionTest extends TestCase
 
         User::factory()->count(3)->create();
 
-        $query = new UserRankSections($course);
+        $query = new UserRankingsBuilder($course);
 
         $this->assertEquals(collect([]), $query->bottomTier()->list());
 
