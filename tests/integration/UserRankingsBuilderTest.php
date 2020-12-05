@@ -16,7 +16,8 @@ class UserRankingsBuilderTest extends TestCase
      */
     public function it_returns_2_sections_if_user_is_in_top_or_bottom_4($items, $userId)
     {
-        $query = new UserRankingsBuilder($items, $userId);
+        $query = new UserRankingsBuilder();
+        $query->initialize($items, $userId);
         $this->assertCount(2, $query->build()->get());
     }
 
@@ -58,7 +59,8 @@ class UserRankingsBuilderTest extends TestCase
             ]);
         }
 
-        $query = new UserRankingsBuilder($items, 10);
+        $query = new UserRankingsBuilder($items);
+        $query->initialize($items, 10);
 
         $actual = $query->build()->get();
 
@@ -79,7 +81,8 @@ class UserRankingsBuilderTest extends TestCase
             ]);
         }
 
-        $query = new UserRankingsBuilder($items, 1);
+        $query = new UserRankingsBuilder();
+        $query->initialize($items, 1);
         $actual = $query->build()->get();
 
         $this->assertEquals(1, $actual->first()->first()->user_id);
@@ -99,7 +102,8 @@ class UserRankingsBuilderTest extends TestCase
             ]);
         }
 
-        $query = new UserRankingsBuilder($items, 1);
+        $query = new UserRankingsBuilder();
+        $query->initialize($items, 1);
         $actual = $query->build()->get();
 
         $this->assertSameSize($items, $actual->first());

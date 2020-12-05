@@ -1,12 +1,12 @@
 <?php
 
 
-namespace App\Query;
+namespace App\Api;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
-class UserRankingsQuery
+class UserRankingsQuery implements UserRankingsInterface
 {
     private $query;
 

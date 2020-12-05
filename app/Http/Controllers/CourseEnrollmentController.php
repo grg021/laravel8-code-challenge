@@ -2,16 +2,37 @@
 
 namespace App\Http\Controllers;
 
-use App\Api\UserRankingsBuilder;
+use App\Api\SectionsBuilder;
+use App\Api\UserRankingsInterface;
 use App\Models\Course;
 use App\Models\CourseEnrollment;
 use App\Models\RankItem;
-use App\Query\UserRankingsQuery;
+use App\Api\UserRankingsQuery;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\RedirectResponse;
 
 class CourseEnrollmentController extends Controller
 {
+
+    /**
+     * @var UserRankingsQuery
+     */
+    private UserRankingsInterface $rankingsQuery;
+    /**
+     * @var SectionsBuilder
+     */
+    private SectionsBuilder $sectionsBuilder;
+
+    /**
+     * CourseEnrollmentController constructor.
+     * @param  UserRankingsInterface  $rankingsQuery
+     * @param  SectionsBuilder  $sectionsBuilder
+     */
+    public function __construct(UserRankingsInterface $rankingsQuery, SectionsBuilder $sectionsBuilder)
+    {
+        $this->rankingsQuery = $rankingsQuery;
+        $this->sectionsBuilder = $sectionsBuilder;
+    }
 
     public function show(string $courseSlug): Renderable
     {
@@ -30,21 +51,18 @@ class CourseEnrollmentController extends Controller
             return view('courses.show', ['course' => $course]);
         }
 
-        $query = new UserRankingsQuery();
-        $builder = new UserRankingsBuilder(collect(), $user->id);
+        $rankings = $this->rankingsQuery->course($course->id)->get();
 
-        $rankings = $query->course($course->id)->get();
-
-        $worldRankings = $builder
-            ->initialize($rankings)
+        $worldRankings = $this->sectionsBuilder
+            ->initialize($rankings, $user->id)
             ->build()
             ->transform(RankItem::class)
             ->get();
 
-        $rankings = $query->course($course->id)->country($user->country_code)->get();
+        $rankings = $this->rankingsQuery->course($course->id)->country($user->country_code)->get();
 
-        $countryRankings = $builder
-            ->initialize($rankings)
+        $countryRankings = $this->sectionsBuilder
+            ->initialize($rankings, $user->id)
             ->build()
             ->transform(RankItem::class)
             ->get();

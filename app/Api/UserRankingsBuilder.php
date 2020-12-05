@@ -15,19 +15,12 @@ class UserRankingsBuilder implements SectionsBuilder
     private int $size = self::MAX_SIZE;
     private int $userId;
 
-    public function __construct(Collection $rankings, int $userId)
+    public function initialize(Collection $rankings, int $userId)
     {
         $this->sections = collect([]);
         $this->sectionItems = collect([]);
         $this->rankItems = $rankings;
         $this->userId = $userId;
-    }
-
-    public function initialize(Collection $rankings)
-    {
-        $this->sections = collect([]);
-        $this->sectionItems = collect([]);
-        $this->rankItems = $rankings;
         return $this;
     }
 

@@ -5,7 +5,7 @@ namespace Tests\integration;
 use App\Models\Country;
 use App\Models\Course;
 use App\Models\User;
-use App\Query\UserRankingsQuery;
+use App\Api\UserRankingsQuery;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
 
