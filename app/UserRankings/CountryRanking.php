@@ -2,10 +2,12 @@
 
 namespace App\UserRankings;
 
+use Illuminate\Database\Query\Builder;
+
 class CountryRanking extends WorldRanking
 {
 
-    protected $country;
+    protected string $country;
 
     public function __construct($courseId, $country)
     {
@@ -13,7 +15,10 @@ class CountryRanking extends WorldRanking
         $this->country = $country;
     }
 
-    protected function filter()
+    /**
+     * @return Builder
+     */
+    protected function filter(): Builder
     {
         return $this->query->where('users.country_code', '=', $this->country);
     }

@@ -6,7 +6,6 @@ use Illuminate\Support\Collection;
 
 interface CourseRankings
 {
-    // TODO return
     /**
      * @return Collection
      * Get user rankings

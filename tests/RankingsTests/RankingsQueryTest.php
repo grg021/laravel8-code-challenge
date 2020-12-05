@@ -40,7 +40,7 @@ class RankingsQueryTest extends TestCase
     }
 
     /** @test */
-    public function it_can_be_filtered_by_counrtry_code_of_user()
+    public function it_can_be_filtered_by_country_code_of_user()
     {
         $course = Course::factory()->create();
         $quiz = $this->makeQuiz($course);
@@ -92,6 +92,52 @@ class RankingsQueryTest extends TestCase
 
         $this->assertCount(6, CourseEnrollment::all());
         $this->assertCount(3, $query->get());
+    }
+
+    /** @test */
+    public function returns_list_sorted_by_points_desc_then_name_asc()
+    {
+        $course = Course::factory()->create();
+        $quiz = $this->makeQuiz($course);
+
+        User::factory()->create();
+        User::factory()->create(['name' => 'Bob']);
+        User::factory()->create(['name' => 'Anna']);
+        User::factory()->create(['name' => 'Cat']);
+
+        $this->makeQuizAnswer(1, $quiz, 7);
+        $this->makeQuizAnswer(2, $quiz, 5);
+        $this->makeQuizAnswer(3, $quiz, 5);
+        $this->makeQuizAnswer(4, $quiz, 5);
+
+        $list = (new WorldRanking($course->id))->get();
+
+        $this->assertEquals(7, $list[0]->points);
+        $this->assertEquals(5, $list[1]->points);
+        $this->assertEquals(3, $list[1]->user_id);
+        $this->assertEquals(2, $list[2]->user_id);
+        $this->assertEquals(4, $list[3]->user_id);
+    }
+
+    /** @test */
+    public function it_returns_ranked_list()
+    {
+        $course = Course::factory()->create();
+        $quiz = $this->makeQuiz($course);
+
+        User::factory()->count(4)->create();
+
+        $this->makeQuizAnswer(1, $quiz, 1);
+        $this->makeQuizAnswer(3, $quiz, 7);
+        $this->makeQuizAnswer(2, $quiz, 5);
+        $this->makeQuizAnswer(4, $quiz, 5);
+
+        $list = (new WorldRanking($course->id))->get();
+
+        $this->assertEquals(1, $list[0]->rank);
+        $this->assertEquals(2, $list[1]->rank);
+        $this->assertEquals(2, $list[2]->rank);
+        $this->assertEquals(3, $list[3]->rank);
     }
 
 }

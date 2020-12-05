@@ -2,13 +2,14 @@
 
 namespace App\UserRankings;
 
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 class WorldRanking implements CourseRankings
 {
 
-    protected $query;
+    protected Builder $query;
 
     public function __construct($courseId)
     {
@@ -19,13 +20,16 @@ class WorldRanking implements CourseRankings
             ->where('lessons.course_id', '=', $courseId);
     }
 
-    protected function filter()
+    /**
+     * @return Builder
+     */
+    protected function filter(): Builder
     {
         return $this->query;
     }
 
     /**
-     * @inheritDoc
+     * @return Collection
      */
     public function get(): Collection
     {
@@ -33,7 +37,7 @@ class WorldRanking implements CourseRankings
             ->selectRaw('sum(score) as points, quiz_answers.user_id, 0 as highlight, 0 as points_diff ')
             ->groupBy('quiz_answers.user_id')
             ->orderByDesc('points')
-            ->orderByDesc('name')
+            ->orderBy('name')
             ->get();
 
         return rank($rankings);

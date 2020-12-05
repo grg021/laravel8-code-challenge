@@ -16,7 +16,7 @@ class BuildBottomBuildSection extends BuildSection
         $maxSize = self::MAX_SIZE - $content->sections->first()->count();
         $rankItems = $content->rankItems->reverse()->values();
         $size = $this->determineSizeForSection($rankItems, $content->userId, $maxSize);
-        $content->sectionItems = $rankItems->take($size)->sortBy('rank')->values();
+        $content->sectionItems = $rankItems->take($size)->reverse()->values();
         $content->rankItems = $this->removeItemsFromList($content->sectionItems, $rankItems)->reverse()->values();
 
         return $content;
