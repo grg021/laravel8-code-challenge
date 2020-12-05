@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\UserRankings\CountryRanking;
+use App\UserRankings\LeaderBoardFactory;
 use App\UserRankings\RankingsBuilderInterface;
-use App\UserRankings\RankingsQueryInterface;
+use App\UserRankings\CourseRankings;
 use App\Models\Course;
 use App\Models\CourseEnrollment;
 use App\Models\RankItem;
-use App\UserRankings\RankingsQuery;
+use App\UserRankings\CourseRankingsQuery;
+use App\UserRankings\WorldRanking;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\RedirectResponse;
 
@@ -17,9 +20,9 @@ class CourseEnrollmentController extends Controller
 {
 
     /**
-     * @var RankingsQuery
+     * @var CourseRankingsQuery
      */
-    private RankingsQueryInterface $rankingsQuery;
+    private CourseRankings $rankingsQuery;
     /**
      * @var RankingsBuilderInterface
      */
@@ -27,12 +30,11 @@ class CourseEnrollmentController extends Controller
 
     /**
      * CourseEnrollmentController constructor.
-     * @param  RankingsQueryInterface  $rankingsQuery
+     * @param  CourseRankings  $rankingsQuery
      * @param  RankingsBuilderInterface  $sectionsBuilder
      */
-    public function __construct(RankingsQueryInterface $rankingsQuery, RankingsBuilderInterface $sectionsBuilder)
+    public function __construct(RankingsBuilderInterface $sectionsBuilder)
     {
-        $this->rankingsQuery = $rankingsQuery;
         $this->sectionsBuilder = $sectionsBuilder;
     }
 
@@ -53,23 +55,17 @@ class CourseEnrollmentController extends Controller
             return view('courses.show', ['course' => $course]);
         }
 
-        $rankingsForCourse = $this->rankingsQuery->course($course->id);
+        $rankItems = (new WorldRanking($course->id))->get();
 
-        $worldRanking = $this->sectionsBuilder
-            ->initialize($rankingsForCourse->get(), $user->id)
-            ->build()
-            ->transform(RankItem::class)
-            ->get();
+        $worldRanking = (new LeaderBoardFactory($this->sectionsBuilder))
+            ->getLeaderboard($rankItems, $user->id);
 
         $worldRank = $this->sectionsBuilder->getUserRank();
 
-        $rankingsByCountry = $this->rankingsQuery->course($course->id)->country($user->country_code);
+        $countryRankItems = (new CountryRanking($course->id, $user->country_code))->get();
 
-        $countryRanking = $this->sectionsBuilder
-            ->initialize($rankingsByCountry->get(), $user->id)
-            ->build()
-            ->transform(RankItem::class)
-            ->get();
+        $countryRanking = (new LeaderBoardFactory($this->sectionsBuilder))
+            ->getLeaderboard($countryRankItems, $user->id);
 
         $countryRank = $this->sectionsBuilder->getUserRank();
 
@@ -88,4 +84,5 @@ class CourseEnrollmentController extends Controller
 
         return redirect()->action([self::class, 'show'], [$course->slug]);
     }
+
 }

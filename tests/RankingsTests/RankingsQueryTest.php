@@ -6,7 +6,9 @@ use App\Models\Country;
 use App\Models\Course;
 use App\Models\CourseEnrollment;
 use App\Models\User;
-use App\UserRankings\RankingsQuery;
+use App\UserRankings\CountryRanking;
+use App\UserRankings\CourseRankingsQuery;
+use App\UserRankings\WorldRanking;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
 
@@ -26,8 +28,7 @@ class RankingsQueryTest extends TestCase
         $this->makeQuizAnswer(3, $quiz, 7);
         $this->makeQuizAnswer(2, $quiz, 5);
 
-        $query = new RankingsQuery();
-        $query->course($course->id);
+        $query = new WorldRanking($course->id);
 
         $expectedValues = [
             ['3', '7'],
@@ -60,8 +61,7 @@ class RankingsQueryTest extends TestCase
         $this->makeQuizAnswer(6, $quiz, 7);
         $this->makeQuizAnswer(5, $quiz, 5);
 
-        $query = new RankingsQuery();
-        $query->country($countryCodes[1]);
+        $query = new CountryRanking($course->id, $countryCodes[1]);
 
         $expectedValues = [
             ['6', '7'],
@@ -88,8 +88,7 @@ class RankingsQueryTest extends TestCase
         $this->makeQuizAnswer(3, $quiz, 7);
         $this->makeQuizAnswer(2, $quiz, 5);
 
-        $query = new RankingsQuery();
-        $query->course($course->id);
+        $query = new WorldRanking($course->id);
 
         $this->assertCount(6, CourseEnrollment::all());
         $this->assertCount(3, $query->get());

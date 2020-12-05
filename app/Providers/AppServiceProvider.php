@@ -4,8 +4,8 @@ namespace App\Providers;
 
 use App\UserRankings\RankingsBuilderInterface;
 use App\UserRankings\UserRankingsBuilder;
-use App\UserRankings\RankingsQueryInterface;
-use App\UserRankings\RankingsQuery;
+use App\UserRankings\CourseRankings;
+use App\UserRankings\CourseRankingsQuery;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -18,8 +18,8 @@ class AppServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->bind(
-            RankingsQueryInterface::class,
-            RankingsQuery::class
+            CourseRankings::class,
+            CourseRankingsQuery::class
         );
         $this->app->bind(
             RankingsBuilderInterface::class,
