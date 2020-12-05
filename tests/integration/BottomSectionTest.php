@@ -16,7 +16,7 @@ class BottomSectionTest extends TestCase
 
         $items = collect([]);
 
-        foreach (range(9, 1) as $n) {
+        foreach (range(10, 1) as $n) {
             $items->push(createRankItemObject($n, $n, '1'));
         }
 
@@ -40,7 +40,7 @@ class BottomSectionTest extends TestCase
     {
         $items = collect([]);
 
-        foreach (range(9, 1) as $n) {
+        foreach (range(10, 1) as $n) {
             $items->push(createRankItemObject($n, $n, '1'));
         }
 
@@ -66,7 +66,7 @@ class BottomSectionTest extends TestCase
     {
         $items = collect([]);
 
-        foreach (range(9, 1) as $n) {
+        foreach (range(10, 1) as $n) {
             $items->push(createRankItemObject($n, $n, '1'));
         }
 

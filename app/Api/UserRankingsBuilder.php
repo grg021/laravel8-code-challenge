@@ -12,7 +12,8 @@ class UserRankingsBuilder implements SectionsBuilder
     private Collection $rankItems;
     private Collection $sections;
     private Collection $sectionItems;
-    private int $size = self::MAX_SIZE;
+    private int $size = self::MIN_SIZE;
+    private int $maxSize = self::MAX_SIZE;
     private int $userId;
     private $userRankItem;
 
@@ -75,7 +76,7 @@ class UserRankingsBuilder implements SectionsBuilder
         return $this->sectionItems;
     }
 
-    public function middleTier(): UserRankingsBuilder
+    private function middleTier(): UserRankingsBuilder
     {
         $middle = collect([]);
         $pos = getUserPosition($this->rankItems, $this->userId);
@@ -90,8 +91,8 @@ class UserRankingsBuilder implements SectionsBuilder
 
     private function setSectionSize($minimumSize = self::MIN_SIZE)
     {
-        $this->size = ($this->rankItems->count() <= $minimumSize)
-            ? $minimumSize
+        $this->size = ($this->rankItems->count() <= $this->maxSize)
+            ? $this->maxSize
             : $this->getSizeBasedOnUserPosition($minimumSize);
         return $this;
     }
@@ -107,6 +108,7 @@ class UserRankingsBuilder implements SectionsBuilder
     protected function removeItemsFromList(Collection $list)
     {
         $this->rankItems = $this->rankItems->splice($list->count());
+        $this->maxSize = $this->maxSize - $list->count();
     }
 
     protected function prioritizeUserIfSameRank()
@@ -168,6 +170,6 @@ class UserRankingsBuilder implements SectionsBuilder
 
     public function getUserRank()
     {
-        return ordinal($this->userRankItem->rank);
+        return ($this->userRankItem) ? ordinal($this->userRankItem->rank) : '';
     }
 }

@@ -15,7 +15,7 @@ class UserRankingsBuilderTest extends TestCase
     {
         $items = collect([]);
 
-        foreach (range(9, 1) as $key => $item) {
+        foreach (range(10, 1) as $key => $item) {
             $items->push((object) [
                 'points' => '1',
                 'user_id' => $item,
@@ -141,26 +141,30 @@ class UserRankingsBuilderTest extends TestCase
     {
         $items = collect([]);
 
-        $items->push(createRankItemObject(6, '6', '1'));
-        $items->push(createRankItemObject(5, '5', '2'));
-        $items->push(createRankItemObject(4, '4', '3'));
-        $items->push(createRankItemObject(3, '3', '4'));
-        $items->push(createRankItemObject(2, '2', '5'));
-        $items->push(createRankItemObject(1, '1', '6'));
+        foreach (range(10, 1) as $key => $item) {
+            $items->push(createRankItemObject($item, $item, $key + 1));
+        }
 
         $query = new UserRankingsBuilder();
-        $query->initialize($items, 4);
+        $query->initialize($items, 5);
         $sections = $query->build()->get();
 
+
         $first = $sections->first();
+        $mid = $sections[1];
         $last = $sections->last();
 
-        $this->assertEquals(2, $first[0]->points_diff);
-        $this->assertEquals(1, $first[1]->points_diff);
-        $this->assertEquals('0', $first[2]->points_diff);
-        $this->assertEquals('0', $first[3]->points_diff);
-        $this->assertEquals('0', $last[0]->points_diff);
-        $this->assertEquals('0', $last[1]->points_diff);
+
+        $first->each(function ($item) {
+            $this->assertEquals('0', $item->points_diff);
+        });
+
+        $last->each(function ($item) {
+            $this->assertEquals('0', $item->points_diff);
+        });
+
+        $this->assertEquals(1, $mid[0]->points_diff);
+
     }
 
     /** @test */
