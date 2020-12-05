@@ -7,11 +7,8 @@ namespace App\Http\Controllers;
 use App\UserRankings\CountryRanking;
 use App\UserRankings\LeaderBoardFactory;
 use App\UserRankings\RankingsBuilderInterface;
-use App\UserRankings\CourseRankings;
 use App\Models\Course;
 use App\Models\CourseEnrollment;
-use App\Models\RankItem;
-use App\UserRankings\CourseRankingsQuery;
 use App\UserRankings\WorldRanking;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\RedirectResponse;
@@ -20,17 +17,12 @@ class CourseEnrollmentController extends Controller
 {
 
     /**
-     * @var CourseRankingsQuery
-     */
-    private CourseRankings $rankingsQuery;
-    /**
      * @var RankingsBuilderInterface
      */
     private RankingsBuilderInterface $sectionsBuilder;
 
     /**
      * CourseEnrollmentController constructor.
-     * @param  CourseRankings  $rankingsQuery
      * @param  RankingsBuilderInterface  $sectionsBuilder
      */
     public function __construct(RankingsBuilderInterface $sectionsBuilder)
@@ -55,15 +47,15 @@ class CourseEnrollmentController extends Controller
             return view('courses.show', ['course' => $course]);
         }
 
-        $rankItems = (new WorldRanking($course->id))->get();
-        $worldRank = getUserRank($rankItems, $user->id);
+        $worldRankList = (new WorldRanking($course->id))->get();
+        $worldRank = getUserRank($worldRankList, $user->id);
         $worldRanking = (new LeaderBoardFactory($this->sectionsBuilder))
-            ->getLeaderboard($rankItems, $user->id);
+            ->getLeaderboard($worldRankList, $user->id);
 
-        $countryRankItems = (new CountryRanking($course->id, $user->country_code))->get();
-        $countryRank = getUserRank($countryRankItems, $user->id);
+        $countryRankList = (new CountryRanking($course->id, $user->country_code))->get();
+        $countryRank = getUserRank($countryRankList, $user->id);
         $countryRanking = (new LeaderBoardFactory($this->sectionsBuilder))
-            ->getLeaderboard($countryRankItems, $user->id);
+            ->getLeaderboard($countryRankList, $user->id);
 
         return view(
             'courseEnrollments.show',
