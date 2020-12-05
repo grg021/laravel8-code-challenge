@@ -4,6 +4,7 @@ namespace Tests\integration;
 
 use App\Models\Country;
 use App\Models\Course;
+use App\Models\CourseEnrollment;
 use App\Models\User;
 use App\Api\UserRankingsQuery;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
@@ -69,6 +70,29 @@ class RankingsQueryTest extends TestCase
         ];
         $this->assertEquals(3, $query->get()->count());
         $this->checkValues($query->get(), $expectedValues);
+    }
+
+    /** @test */
+    public function list_should_only_show_those_who_has_quiz_answers_for_the_given_course()
+    {
+        $course = Course::factory()->create();
+        $quiz = $this->makeQuiz($course);
+
+        User::factory()->count(6)->create();
+
+        foreach (User::all() as $user) {
+            $course->enroll($user);
+        }
+
+        $this->makeQuizAnswer(1, $quiz, 1);
+        $this->makeQuizAnswer(3, $quiz, 7);
+        $this->makeQuizAnswer(2, $quiz, 5);
+
+        $query = new UserRankingsQuery();
+        $query->course($course->id);
+
+        $this->assertCount(6, CourseEnrollment::all());
+        $this->assertCount(3, $query->get());
     }
 
 }

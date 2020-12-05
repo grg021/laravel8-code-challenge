@@ -29,7 +29,7 @@ class UserRankingsQuery implements UserRankingsInterface
         return $this;
     }
 
-    public function country($countryCode)
+    public function country($countryCode): UserRankingsQuery
     {
         $this->query->where('users.country_code', $countryCode);
         return $this;

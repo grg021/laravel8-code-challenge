@@ -34,18 +34,44 @@
                         </p>
                         <div class="row">
                             <div class="col-md-6">
-                                <h4>You are ranked <b>{{ $countryRank }}</b> in {{ auth()->user()->country->name }}</h4>
+                                @if($countryRank)
+                                    <h4>You are ranked <b>{{ $countryRank }}</b> in {{ auth()->user()->country->name }}</h4>
+                                @else
+                                    <h5>You are not yet ranked in {{ auth()->user()->country->name }}</h5>
+                                @endif
                                 {{--Replace this stub markup by your code--}}
                                 <ul style="padding: 0px;">
-                                    @include('courseEnrollments.rankings', ['rankings' => $countryRanking])
+                                    @if($countryRanking->count() === 0)
+                                        <li class="courseRanking__rankItem"
+                                            style="display: flex; flex-direction: row; padding: 10px;">
+                                            <div>
+                                                Quizzes on going...
+                                            </div>
+                                        </li>
+                                    @else
+                                        @include('courseEnrollments.rankings', ['rankings' => $countryRanking])
+                                    @endif
                                 </ul>
 
                             </div>
                             <div class="col-md-6">
-                                <h4>You are ranked <b>{{ $worldRank }}</b> Worldwide</h4>
+                                @if($worldRank)
+                                    <h4>You are ranked <b>{{ $worldRank }}</b> Worldwide</h4>
+                                    @else
+                                    <h5>You are not yet ranked Worldwide</h5>
+                                @endif
                                 {{--Replace this stub markup by your code--}}
                                 <ul style="padding: 0px;">
-                                    @include('courseEnrollments.rankings', ['rankings' => $worldRanking])
+                                    @if($worldRanking->count() === 0)
+                                        <li class="courseRanking__rankItem"
+                                            style="display: flex; flex-direction: row; padding: 10px;">
+                                            <div>
+                                                Quizzes on going...
+                                            </div>
+                                        </li>
+                                    @else
+                                        @include('courseEnrollments.rankings', ['rankings' => $worldRanking])
+                                    @endif
                                 </ul>
                             </div>
                         </div>
