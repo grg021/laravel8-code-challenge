@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\integration;
+namespace Tests\RankingsTests;
 
 use App\UserRankings\UserRankingsBuilder;
 use Illuminate\Foundation\Testing\DatabaseMigrations;

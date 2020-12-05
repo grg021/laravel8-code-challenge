@@ -28,7 +28,7 @@ interface RankingsBuilderInterface
      * @return RankingsBuilderInterface
      * Transform each item in the list to an object for front-end consumption
      */
-    public function transform($transformer);
+    public function transform($transformer): RankingsBuilderInterface;
 
     /**
      * @return Collection

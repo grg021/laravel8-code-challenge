@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\integration;
+namespace Tests\RankingsTests;
 
 use App\Models\Country;
 use App\Models\Course;

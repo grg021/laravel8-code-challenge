@@ -2,61 +2,43 @@
 
 namespace App\UserRankings;
 
+use App\UserRankings\Pipeline\BuildBottomSection;
+use App\UserRankings\Pipeline\BuildMiddleSection;
+use App\UserRankings\Pipeline\BuildTopSection;
+use App\UserRankings\Pipeline\HighlightUser;
+use App\UserRankings\Pipeline\PrioritizeUser;
+use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Collection;
 
 class UserRankingsBuilder implements RankingsBuilderInterface
 {
-    private const MIN_SIZE = 3;
-    private const MAX_SIZE = 9;
-
     private Collection $rankItems;
     private Collection $sections;
-    private Collection $sectionItems;
-    private int $size = self::MIN_SIZE;
-    private int $maxSize = self::MAX_SIZE;
     private int $userId;
     private $userRankItem;
 
     public function initialize(Collection $rankings, int $userId): RankingsBuilderInterface
     {
         $this->sections = collect([]);
-        $this->sectionItems = collect([]);
         $this->rankItems = $rankings;
         $this->userId = $userId;
         $this->userRankItem = $this->getUserRankItem();
-        $this->maxSize = self::MAX_SIZE;
         return $this;
     }
 
     public function build(): RankingsBuilderInterface
     {
 
-        $this->prioritizeUserIfSameRank();
-        $this->highlightUser();
+        $this->prepareRankItems();
 
-        // build top section
-        $topList = $this->setSectionSize()->getSectionItems();
-        $this->removeItemsFromList($topList);
-
-        // build bottom section
-        $this->rankItems = $this->rankItems->reverse()->values();
-        $bottomList = $this->setSectionSize()->getSectionItems();
-        $this->removeItemsFromList($bottomList);
-
-        // build middle section
-        $this->rankItems = $this->rankItems->reverse()->values();
-        $middleList = $this->middleTier()->getSectionItems();
-
-        $this->sections->push($topList);
-        $this->sections->push($middleList);
-        $this->sections->push($bottomList);
+        $this->buildSections();
 
         $this->addDiffInfo();
 
         return $this;
     }
 
-    public function transform($transformer)
+    public function transform($transformer): RankingsBuilderInterface
     {
         $this->sections = $this->sections->map(function (Collection $section) use ($transformer) {
             return $section->mapInto($transformer);
@@ -74,82 +56,6 @@ class UserRankingsBuilder implements RankingsBuilderInterface
     public function getUserRank(): string
     {
         return ($this->userRankItem) ? ordinal($this->userRankItem->rank) : '';
-    }
-
-    private function getSectionItems(): Collection
-    {
-        $this->sectionItems = $this->rankItems->take($this->size)->sortBy('rank')->values();
-        return $this->sectionItems;
-    }
-
-    private function middleTier(): UserRankingsBuilder
-    {
-        $middle = collect([]);
-        $pos = getUserPosition($this->rankItems, $this->userId);
-        if ($pos > -1) {
-            $middle->push($this->rankItems[$pos-1]);
-            $middle->push($this->rankItems[$pos]);
-            $middle->push($this->rankItems[$pos+1]);
-        }
-        $this->rankItems = $middle;
-        return $this;
-    }
-
-    private function setSectionSize($minimumSize = self::MIN_SIZE)
-    {
-        $this->size = ($this->rankItems->count() <= $this->maxSize)
-            ? $this->maxSize
-            : $this->getSizeBasedOnUserPosition($minimumSize);
-        return $this;
-    }
-
-    private function getSizeBasedOnUserPosition($minimumSize): int
-    {
-
-        $pos = getUserPosition($this->rankItems, $this->userId);
-
-        return ($pos > $minimumSize || $pos <= 0) ? $minimumSize : $pos + 2;
-    }
-
-    protected function removeItemsFromList(Collection $list)
-    {
-        $this->rankItems = $this->rankItems->splice($list->count());
-        $this->maxSize = $this->maxSize - $list->count();
-    }
-
-    protected function prioritizeUserIfSameRank()
-    {
-        $list = $this->rankItems;
-
-        $pos = getUserPosition($list, $this->userId);
-
-        if ($pos > -1) {
-            $rankItem = $list[$pos];
-
-            $dups = $list->where('rank', $rankItem->rank);
-
-            if ($dups->count() > 1 and $dups->first()->user_id != $rankItem->user_id) {
-                $list->splice($pos, 1);
-                $list->splice($dups->keys()->first(), 0, [$rankItem]);
-            }
-        }
-        $this->rankItems = $list;
-        return $this;
-    }
-
-    private function highlightUser()
-    {
-        $list = $this->rankItems;
-
-        $pos = getUserPosition($list, $this->userId);
-
-        if ($pos > -1) {
-            $rankItem = $list[$pos];
-            $rankItem->highlight = 1;
-            $list->splice($pos, 1, [$rankItem]);
-        }
-        $this->rankItems = $list;
-        return $this;
     }
 
     private function getUserRankItem()
@@ -174,4 +80,31 @@ class UserRankingsBuilder implements RankingsBuilderInterface
         }
     }
 
+    protected function prepareRankItems(): void
+    {
+        $this->rankItems = app(Pipeline::class)
+            ->send([$this->rankItems, $this->userId])
+            ->through([
+                PrioritizeUser::class,
+                HighlightUser::class,
+            ])
+            ->then(function ($content) {
+                return $content;
+            });
+    }
+
+    protected function buildSections(): void
+    {
+
+        $this->sections = app(Pipeline::class)
+            ->send([$this->rankItems, $this->userId, $this->sections])
+            ->through([
+                BuildTopSection::class,
+                BuildBottomSection::class,
+                BuildMiddleSection::class,
+            ])
+            ->then(function ($content) {
+                return $content;
+            });
+    }
 }

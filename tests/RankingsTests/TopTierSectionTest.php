@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\integration;
+namespace Tests\RankingsTests;
 
 use App\Models\Course;
 use App\Models\User;
