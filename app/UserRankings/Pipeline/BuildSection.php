@@ -1,14 +1,12 @@
 <?php
 
-
 namespace App\UserRankings\Pipeline;
-
 
 use App\UserRankings\Popo\BuildSectionContent;
 use Closure;
 use Illuminate\Support\Collection;
 
-class Section implements Pipe
+class BuildSection implements Pipe
 {
     protected const MIN_SIZE = 3;
     protected const MAX_SIZE = 9;
@@ -62,5 +60,4 @@ class Section implements Pipe
 
         return ($pos > self::MIN_SIZE || $pos <= 0) ? self::MIN_SIZE : $pos + 2;
     }
-
 }

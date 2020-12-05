@@ -4,7 +4,7 @@ namespace App\UserRankings\Pipeline;
 
 use App\UserRankings\Popo\BuildSectionContent;
 
-class BuildBottomSection extends Section
+class BuildBottomBuildSection extends BuildSection
 {
 
     /**

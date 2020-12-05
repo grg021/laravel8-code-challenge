@@ -1,26 +1,35 @@
 <?php
 
-
 namespace App\UserRankings\Pipeline;
 
-
+use App\UserRankings\Popo\PrepareRankingsContent;
 use Closure;
 
 class HighlightUser implements Pipe
 {
 
+    /**
+     * @param $content
+     * @param  Closure  $next
+     * @return mixed
+     */
     public function handle($content, Closure $next)
     {
-        $list = $content[0];
-        $userId = $content[1];
+        return $next($this->execute($content));
+    }
 
-        $pos = getUserPosition($list, $userId);
-
+    /**
+     * @param  PrepareRankingsContent  $content
+     * @return PrepareRankingsContent
+     */
+    public function execute(PrepareRankingsContent $content)
+    {
+        $pos = getUserPosition($content->rankItems, $content->userId);
         if ($pos > -1) {
-            $rankItem = $list[$pos];
+            $rankItem = $content->rankItems[$pos];
             $rankItem->highlight = 1;
-            $list->splice($pos, 1, [$rankItem]);
+            $content->rankItems->splice($pos, 1, [$rankItem]);
         }
-        return $next([$list, $userId]);
+        return $content;
     }
 }

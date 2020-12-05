@@ -3,12 +3,13 @@
 namespace App\UserRankings;
 
 use App\UserRankings\Pipeline\AddPointDifference;
-use App\UserRankings\Pipeline\BuildBottomSection;
-use App\UserRankings\Pipeline\BuildMiddleSection;
-use App\UserRankings\Pipeline\BuildTopSection;
+use App\UserRankings\Pipeline\BuildBottomBuildSection;
+use App\UserRankings\Pipeline\BuildMiddleBuildSection;
+use App\UserRankings\Pipeline\BuildTopBuildSection;
 use App\UserRankings\Pipeline\HighlightUser;
 use App\UserRankings\Pipeline\PrioritizeUser;
 use App\UserRankings\Popo\BuildSectionContent;
+use App\UserRankings\Popo\PrepareRankingsContent;
 use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Collection;
 
@@ -68,15 +69,16 @@ class UserRankingsBuilder implements RankingsBuilderInterface
 
     protected function prepareRankItems(): void
     {
+        $content = new PrepareRankingsContent($this->rankItems, $this->userId);
         $this->rankItems = app(Pipeline::class)
-            ->send([$this->rankItems, $this->userId])
+            ->send($content)
             ->through([
                 PrioritizeUser::class,
                 HighlightUser::class,
                 AddPointDifference::class
             ])
-            ->then(function ($content) {
-                return $content;
+            ->then(function (PrepareRankingsContent $content) {
+                return $content->rankItems;
             });
     }
 
@@ -86,9 +88,9 @@ class UserRankingsBuilder implements RankingsBuilderInterface
         $this->sections = app(Pipeline::class)
             ->send($content)
             ->through([
-                BuildTopSection::class,
-                BuildBottomSection::class,
-                BuildMiddleSection::class,
+                BuildTopBuildSection::class,
+                BuildBottomBuildSection::class,
+                BuildMiddleBuildSection::class,
             ])
             ->then(function (BuildSectionContent $content) {
                 return $content->sections;
