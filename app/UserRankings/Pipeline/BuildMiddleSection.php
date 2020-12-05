@@ -2,33 +2,33 @@
 
 namespace App\UserRankings\Pipeline;
 
-use Closure;
+use App\UserRankings\Popo\BuildSectionContent;
 
 class BuildMiddleSection extends Section
 {
-    public function handle($content, Closure $next)
-    {
-        // TODO use pojo
-        $rankItems = $content[0];
-        $userId = $content[1];
-        $sections = $content[2];
-        $bottomList = $content[3];
 
+    /**
+     * @param  BuildSectionContent  $content
+     * @return BuildSectionContent
+     */
+    public function build(BuildSectionContent $content): BuildSectionContent
+    {
         $middle = collect([]);
-        $pos = getUserPosition($rankItems, $userId);
+        $pos = getUserPosition($content->rankItems, $content->userId);
+
         if ($pos > -1) {
-            $middle->push($rankItems[$pos-1]);
-            $middle->push($rankItems[$pos]);
-            $middle->push($rankItems[$pos+1]);
+            $middle->push($content->rankItems[$pos-1]);
+            $middle->push($content->rankItems[$pos]);
+            $middle->push($content->rankItems[$pos+1]);
         }
 
-        $sections->push($middle);
-        $sections->push($bottomList);
+        $content->sections->push($middle);
+        $content->sections->push($content->sectionItems);
 
-        $sections->filter(function ($section) {
+        $content->sections->filter(function ($section) {
             return $section->count();
         });
 
-        return $next($sections);
+        return $content;
     }
 }

@@ -2,27 +2,24 @@
 
 namespace App\UserRankings\Pipeline;
 
-use Closure;
+use App\UserRankings\Popo\BuildSectionContent;
 
 class BuildBottomSection extends Section
 {
-    public function handle($content, Closure $next)
+
+    /**
+     * @param  BuildSectionContent  $content
+     * @return BuildSectionContent
+     */
+    public function build(BuildSectionContent $content): BuildSectionContent
     {
-        // TODO use pojo
-        $rankItems = $content[0];
-        $userId = $content[1];
-        $sections = $content[2];
+        $maxSize = self::MAX_SIZE - $content->sections->first()->count();
+        $rankItems = $content->rankItems->reverse()->values();
+        $size = $this->determineSizeForSection($rankItems, $content->userId, $maxSize);
+        $content->sectionItems = $rankItems->take($size)->sortBy('rank')->values();
+        $content->rankItems = $this->removeItemsFromList($content->sectionItems, $rankItems)->reverse()->values();
 
-        $maxSize = self::MAX_SIZE - $sections->first()->count();
-
-        $rankItems = $rankItems->reverse()->values();
-
-        $size = $this->determineSizeForSection($rankItems, $userId, $maxSize);
-
-        $sectionItems = $rankItems->take($size)->sortBy('rank')->values();
-
-        $rankItems = $this->removeItemsFromList($sectionItems, $rankItems)->reverse()->values();
-
-        return $next([$rankItems, $userId, $sections, $sectionItems]);
+        return $content;
     }
+
 }

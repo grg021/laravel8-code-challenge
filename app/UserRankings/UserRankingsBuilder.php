@@ -8,6 +8,7 @@ use App\UserRankings\Pipeline\BuildMiddleSection;
 use App\UserRankings\Pipeline\BuildTopSection;
 use App\UserRankings\Pipeline\HighlightUser;
 use App\UserRankings\Pipeline\PrioritizeUser;
+use App\UserRankings\Popo\BuildSectionContent;
 use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Collection;
 
@@ -81,16 +82,16 @@ class UserRankingsBuilder implements RankingsBuilderInterface
 
     protected function buildSections(): void
     {
-
+        $content = new BuildSectionContent($this->rankItems, $this->userId);
         $this->sections = app(Pipeline::class)
-            ->send([$this->rankItems, $this->userId, $this->sections])
+            ->send($content)
             ->through([
                 BuildTopSection::class,
                 BuildBottomSection::class,
                 BuildMiddleSection::class,
             ])
-            ->then(function ($content) {
-                return $content;
+            ->then(function (BuildSectionContent $content) {
+                return $content->sections;
             });
     }
 }

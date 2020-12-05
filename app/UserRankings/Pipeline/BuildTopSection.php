@@ -1,29 +1,23 @@
 <?php
 
-
 namespace App\UserRankings\Pipeline;
 
-
-use Closure;
+use App\UserRankings\Popo\BuildSectionContent;
 
 class BuildTopSection extends Section
 {
 
-    public function handle($content, Closure $next)
+    /**
+     * @param  BuildSectionContent  $content
+     * @return BuildSectionContent
+     */
+    public function build(BuildSectionContent $content): BuildSectionContent
     {
-        // TODO use pojo
-        $rankItems = $content[0];
-        $userId = $content[1];
-        $sections = $content[2];
+        $size = $this->determineSizeForSection($content->rankItems, $content->userId, self::MAX_SIZE);
+        $sectionItems = $content->rankItems->take($size)->values();
+        $content->rankItems = $this->removeItemsFromList($sectionItems, $content->rankItems);
+        $content->sections->push($sectionItems);
 
-        $size = $this->determineSizeForSection($rankItems, $userId, self::MAX_SIZE);
-
-        $sectionItems = $rankItems->take($size)->values();
-
-        $rankItems = $this->removeItemsFromList($sectionItems, $rankItems);
-        $sections->push($sectionItems);
-
-        return $next([$rankItems, $userId, $sections]);
+        return $content;
     }
-
 }
