@@ -56,18 +56,14 @@ class CourseEnrollmentController extends Controller
         }
 
         $rankItems = (new WorldRanking($course->id))->get();
-
+        $worldRank = getUserRank($rankItems, $user->id);
         $worldRanking = (new LeaderBoardFactory($this->sectionsBuilder))
             ->getLeaderboard($rankItems, $user->id);
 
-        $worldRank = $this->sectionsBuilder->getUserRank();
-
         $countryRankItems = (new CountryRanking($course->id, $user->country_code))->get();
-
+        $countryRank = getUserRank($countryRankItems, $user->id);
         $countryRanking = (new LeaderBoardFactory($this->sectionsBuilder))
             ->getLeaderboard($countryRankItems, $user->id);
-
-        $countryRank = $this->sectionsBuilder->getUserRank();
 
         return view(
             'courseEnrollments.show',

@@ -2,6 +2,7 @@
 
 namespace Tests;
 
+use App\UserRankings\UserRankingsBuilder;
 use PHPUnit\Framework\TestCase;
 
 class RankHelperTest extends TestCase
@@ -99,4 +100,15 @@ class RankHelperTest extends TestCase
         $this->assertEquals('100th', ordinal(100));
     }
 
+    /** @test */
+    public function it_returns_user_rank()
+    {
+        $items = collect([]);
+
+        $items->push(createRankItemObject(3, '6', '1'));
+        $items->push(createRankItemObject(2, '5', '2'));
+        $items->push(createRankItemObject(1, '4', '3'));
+
+        $this->assertEquals('3rd', getUserRank($items, 1));
+    }
 }

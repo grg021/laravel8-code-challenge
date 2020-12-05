@@ -36,10 +36,4 @@ interface RankingsBuilderInterface
      */
     public function get(): Collection;
 
-    /**
-     * @return string
-     * Returns the ordinal rank of the user
-     */
-    public function getUserRank(): string;
-
 }

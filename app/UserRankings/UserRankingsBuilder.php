@@ -18,14 +18,12 @@ class UserRankingsBuilder implements RankingsBuilderInterface
     private Collection $rankItems;
     private Collection $sections;
     private int $userId;
-    private $userRankItem;
 
     public function initialize(Collection $rankings, int $userId): RankingsBuilderInterface
     {
         $this->sections = collect([]);
         $this->rankItems = $rankings;
         $this->userId = $userId;
-        $this->userRankItem = $this->getUserRankItem();
         return $this;
     }
 
@@ -52,19 +50,6 @@ class UserRankingsBuilder implements RankingsBuilderInterface
         return $this->sections->filter(function ($section) {
             return $section->count();
         })->values();
-    }
-
-    public function getUserRank(): string
-    {
-        return ($this->userRankItem) ? ordinal($this->userRankItem->rank) : '';
-    }
-
-    private function getUserRankItem()
-    {
-        $pos = getUserPosition($this->rankItems, $this->userId);
-        if ($pos > -1) {
-            return $this->rankItems[$pos];
-        }
     }
 
     protected function prepareRankItems(): void

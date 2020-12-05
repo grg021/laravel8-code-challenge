@@ -182,19 +182,4 @@ class UserRankingsBuilderTest extends TestCase
         $this->assertEquals('0', $first[1]->points_diff);
         $this->assertEquals('0', $first[2]->points_diff);
     }
-
-    /** @test */
-    public function it_returns_rank_of_user_in_rankings()
-    {
-        $items = collect([]);
-
-        $items->push(createRankItemObject(3, '6', '1'));
-        $items->push(createRankItemObject(2, '5', '2'));
-        $items->push(createRankItemObject(1, '4', '3'));
-
-        $query = new UserRankingsBuilder();
-        $query->initialize($items, 1);
-
-        $this->assertEquals('3rd', $query->getUserRank());
-    }
 }

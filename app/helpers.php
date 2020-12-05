@@ -40,12 +40,24 @@ if (! function_exists('getUserPosition')) {
 }
 
 if (! function_exists('ordinal')) {
-    function ordinal($number) {
+    function ordinal($number): string
+    {
         $ends = array('th','st','nd','rd','th','th','th','th','th','th');
-        if ((($number % 100) >= 11) && (($number%100) <= 13))
+        if ((($number % 100) >= 11) && (($number%100) <= 13)) {
             return $number. 'th';
-        else
+        } else {
             return $number. $ends[$number % 10];
+        }
     }
 }
 
+if (! function_exists('getUserRank')) {
+    function getUserRank(Collection $rankItems, int $userId): string
+    {
+        $pos = getUserPosition($rankItems, $userId);
+        if ($pos > -1) {
+            return ordinal($rankItems[$pos]->rank);
+        }
+        return '';
+    }
+}
