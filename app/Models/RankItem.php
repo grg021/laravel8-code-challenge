@@ -22,7 +22,11 @@ class RankItem extends Model
 
     public function getSubtitleAttribute()
     {
-        return $this->data->points . ' PTS';
+        $subtitle = $this->data->points . ' PTS';
+        if ($this->data->points_diff) {
+            $subtitle .= ' ( +' . $this->data->points_diff . ')';
+        }
+        return $subtitle;
     }
 
     public function getHighlightAttribute()

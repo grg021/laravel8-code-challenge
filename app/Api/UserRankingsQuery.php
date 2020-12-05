@@ -3,12 +3,14 @@
 
 namespace App\Api;
 
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 class UserRankingsQuery implements UserRankingsInterface
 {
-    private $query;
+    private Builder $query;
+    private Collection $rankings;
 
     public function __construct()
     {
@@ -17,6 +19,7 @@ class UserRankingsQuery implements UserRankingsInterface
             ->join('lessons', 'quizzes.lesson_id', '=', 'lessons.id')
             ->join('courses', 'lessons.course_id', '=', 'courses.id')
             ->join('users', 'quiz_answers.user_id', '=', 'users.id');
+        $this->rankings = collect([]);
     }
 
 
@@ -34,12 +37,28 @@ class UserRankingsQuery implements UserRankingsInterface
 
     public function get(): Collection
     {
-        return rank($this->query
-            ->selectRaw('sum(score) as points, quiz_answers.user_id, 0 as highlight')
+        $this->rankings = $this->query
+            ->selectRaw('sum(score) as points, quiz_answers.user_id, 0 as highlight, 0 as points_diff ')
             ->groupBy('quiz_answers.user_id')
             ->orderBy('points', 'desc')
-            ->get());
+            ->get();
+        $this->addRank();
+        return $this->rankings;
     }
 
+    private function addRank()
+    {
+        $prevScore = -1;
+        $rank = 0;
+        $list = $this->rankings;
+
+        foreach ($list as $value) {
+            $value->rank = ($prevScore == $value->points) ? $rank : $rank += 1;
+            $prevScore = $value->points;
+        }
+
+        $this->rankings = $list;
+        return $this;
+    }
 
 }

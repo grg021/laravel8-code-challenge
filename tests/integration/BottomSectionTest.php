@@ -2,8 +2,6 @@
 
 namespace Tests\integration;
 
-use App\Models\Course;
-use App\Models\User;
 use App\Api\UserRankingsBuilder;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
@@ -15,97 +13,80 @@ class BottomSectionTest extends TestCase
     /** @test */
     public function it_returns_bottom_three_from_list()
     {
-        $course = Course::factory()->create();
-        $quiz = $this->makeQuiz($course);
 
-        User::factory()->count(8)->create();
+        $items = collect([]);
 
-        $this->makeQuizAnswer(1, $quiz, 5);
-        $this->makeQuizAnswer(2, $quiz, 6);
-        $this->makeQuizAnswer(3, $quiz, 1);
-        $this->makeQuizAnswer(4, $quiz, 9);
-        $this->makeQuizAnswer(5, $quiz, 8);
-        $this->makeQuizAnswer(6, $quiz, 7);
-        $this->makeQuizAnswer(7, $quiz, 10);
-        $this->makeQuizAnswer(8, $quiz, 9);
+        foreach (range(9, 1) as $n) {
+            $items->push(createRankItemObject($n, $n, '1'));
+        }
 
-        $query = new UserRankingsBuilder($course);
+        $items = rank($items->sortByDesc('points')->values());
 
-        $expectedValues = [
-            ['2', '6'],
-            ['1', '5'],
-            ['3', '1'],
-        ];
+        $query = new UserRankingsBuilder();
+        $query->initialize($items, 1);
+        $sections = $query->build()->get();
 
-        $actual = $query->bottomTier()->getSectionItems();
+        $this->assertCount(2, $sections);
+        $section = $sections->last();
 
-        $this->assertSameSize($expectedValues, $actual);
+        $this->assertEquals('3', $section[0]->user_id);
+        $this->assertEquals('2', $section[1]->user_id);
+        $this->assertEquals('1', $section[2]->user_id);
 
-        $this->checkValues($actual, $expectedValues);
     }
 
     /** @test */
     public function it_returns_bottom_four_from_list_if_user_is_3rd_to_last()
     {
-        $course = Course::factory()->create();
-        $quiz = $this->makeQuiz($course);
+        $items = collect([]);
 
-        $user = User::factory()->create();
+        foreach (range(9, 1) as $n) {
+            $items->push(createRankItemObject($n, $n, '1'));
+        }
 
-        auth()->login($user);
+        $items = rank($items->sortByDesc('points')->values());
 
-        User::factory()->count(7)->create();
+        $query = new UserRankingsBuilder();
+        $query->initialize($items, 3);
+        $sections = $query->build()->get();
 
-        $this->makeQuizAnswer(1, $quiz, 6);
-        $this->makeQuizAnswer(2, $quiz, 5);
-        $this->makeQuizAnswer(3, $quiz, 1);
-        $this->makeQuizAnswer(4, $quiz, 9);
-        $this->makeQuizAnswer(5, $quiz, 8);
-        $this->makeQuizAnswer(6, $quiz, 7);
-        $this->makeQuizAnswer(7, $quiz, 10);
-        $this->makeQuizAnswer(8, $quiz, 9);
-
-        $query = new UserRankingsBuilder($course);
-
-        $expectedValues = [
-            ['6', '7'],
-            ['1', '6'],
-            ['2', '5'],
-            ['3', '1'],
-        ];
-
-        $actual = $query->bottomTier()->getSectionItems();
-
-        $this->assertSameSize($expectedValues, $actual);
-
-        $this->checkValues($actual, $expectedValues);
-    }
+        $this->assertCount(2, $sections);
+        $section = $sections->last();
+        $this->assertCount(4, $section);
 
 
-
-    /** @test */
-    public function it_returns_an_empty_collection_if_data_is_not_enough()
-    {
-        $course = Course::factory()->create();
-        $quiz = $this->makeQuiz($course);
-
-        User::factory()->count(3)->create();
-
-        $query = new UserRankingsBuilder($course);
-
-        $this->assertEquals(collect([]), $query->bottomTier()->getSectionItems());
-
-        $this->makeQuizAnswer(1, $quiz, 1);
-        $this->assertEquals(collect([]), $query->bottomTier()->getSectionItems());
-
-        $this->makeQuizAnswer(2, $quiz, 1);
-        $this->makeQuizAnswer(3, $quiz, 1);
-        $this->assertEquals(collect([]), $query->bottomTier()->getSectionItems());
+        $this->assertEquals('4', $section[0]->user_id);
+        $this->assertEquals('3', $section[1]->user_id);
+        $this->assertEquals('2', $section[2]->user_id);
+        $this->assertEquals('1', $section[3]->user_id);
     }
 
     /** @test */
-    public function it_returns_an_last_item_if_there_are_four_items()
+    public function it_returns_bottom_five_from_list_if_user_is_4th_to_last()
     {
-        $this->assertEquals(1, 1);
+        $items = collect([]);
+
+        foreach (range(9, 1) as $n) {
+            $items->push(createRankItemObject($n, $n, '1'));
+        }
+
+        $items = rank($items->sortByDesc('points')->values());
+
+        $query = new UserRankingsBuilder();
+        $query->initialize($items, 4);
+        $sections = $query->build()->get();
+
+        $this->assertCount(2, $sections);
+        $section = $sections->last();
+        $this->assertCount(5, $section);
+
+
+        $this->assertEquals('5', $section[0]->user_id);
+        $this->assertEquals('4', $section[1]->user_id);
+        $this->assertEquals('3', $section[2]->user_id);
+        $this->assertEquals('2', $section[3]->user_id);
+        $this->assertEquals('1', $section[4]->user_id);
     }
+
+
 }

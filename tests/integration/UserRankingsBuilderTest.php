@@ -10,6 +10,28 @@ class UserRankingsBuilderTest extends TestCase
 {
     use DatabaseMigrations;
 
+    /** @test */
+    public function it_always_displays_top_3_bottom_3()
+    {
+        $items = collect([]);
+
+        foreach (range(9, 1) as $key => $item) {
+            $items->push((object) [
+                'points' => '1',
+                'user_id' => $item,
+                'rank' => 1,
+            ]);
+        }
+
+        $query = new UserRankingsBuilder();
+        $query->initialize($items, 1);
+        $sections = $query->build()->get();
+
+        $this->assertCount(2, $sections);
+        $this->assertCount(3, $sections->first());
+        $this->assertCount(3, $sections->last());
+    }
+
     /**
      * @test
      * @dataProvider itemsAndUserId
@@ -98,7 +120,8 @@ class UserRankingsBuilderTest extends TestCase
                 'points' => '1',
                 'user_id' => $item,
                 'rank' => 1,
-                'highlight' => 0
+                'highlight' => 0,
+                'points_diff' => '0'
             ]);
         }
 
@@ -109,5 +132,51 @@ class UserRankingsBuilderTest extends TestCase
         $this->assertSameSize($items, $actual->first());
         $this->assertEquals(1, $actual->first()[0]->highlight);
         $this->assertEquals(0, $actual->first()[1]->highlight);
+    }
+
+    /** @test */
+    public function it_only_points_diff_on_rank_items_on_same_section_as_user()
+    {
+        $items = collect([]);
+
+        $items->push(createRankItemObject(6, '6', '1'));
+        $items->push(createRankItemObject(5, '5', '2'));
+        $items->push(createRankItemObject(4, '4', '3'));
+        $items->push(createRankItemObject(3, '3', '4'));
+        $items->push(createRankItemObject(2, '2', '5'));
+        $items->push(createRankItemObject(1, '1', '6'));
+
+        $query = new UserRankingsBuilder();
+        $query->initialize($items, 4);
+        $sections = $query->build()->get();
+
+        $first = $sections->first();
+        $last = $sections->last();
+
+        $this->assertEquals(2, $first[0]->points_diff);
+        $this->assertEquals(1, $first[1]->points_diff);
+        $this->assertEquals('0', $first[2]->points_diff);
+        $this->assertEquals('0', $first[3]->points_diff);
+        $this->assertEquals('0', $last[0]->points_diff);
+        $this->assertEquals('0', $last[1]->points_diff);
+    }
+
+    /** @test */
+    public function it_only_adds_positive_points_diff()
+    {
+        $items = collect([]);
+
+        $items->push(createRankItemObject(6, '6', '1'));
+        $items->push(createRankItemObject(5, '5', '2'));
+        $items->push(createRankItemObject(4, '4', '3'));
+
+        $query = new UserRankingsBuilder();
+        $query->initialize($items, 5);
+
+        $first = $query->build()->get()->first();
+
+        $this->assertEquals(1, $first[0]->points_diff);
+        $this->assertEquals('0', $first[1]->points_diff);
+        $this->assertEquals('0', $first[2]->points_diff);
     }
 }
