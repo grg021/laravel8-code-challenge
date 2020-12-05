@@ -24,6 +24,7 @@ class UserRankingsBuilder implements SectionsBuilder
         $this->rankItems = $rankings;
         $this->userId = $userId;
         $this->userRankItem = $this->getUserRankItem();
+        $this->maxSize = self::MAX_SIZE;
         return $this;
     }
 
