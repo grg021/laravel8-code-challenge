@@ -165,4 +165,9 @@ class UserRankingsBuilder implements SectionsBuilder
             }
         }
     }
+
+    public function getUserRank()
+    {
+        return ordinal($this->userRankItem->rank);
+    }
 }

@@ -35,6 +35,8 @@ class UserRankingsBuilderTest extends TestCase
     /**
      * @test
      * @dataProvider itemsAndUserId
+     * @param $items
+     * @param $userId
      */
     public function it_returns_2_sections_if_user_is_in_top_or_bottom_4($items, $userId)
     {
@@ -81,7 +83,7 @@ class UserRankingsBuilderTest extends TestCase
             ]);
         }
 
-        $query = new UserRankingsBuilder($items);
+        $query = new UserRankingsBuilder();
         $query->initialize($items, 10);
 
         $actual = $query->build()->get();
@@ -178,5 +180,20 @@ class UserRankingsBuilderTest extends TestCase
         $this->assertEquals(1, $first[0]->points_diff);
         $this->assertEquals('0', $first[1]->points_diff);
         $this->assertEquals('0', $first[2]->points_diff);
+    }
+
+    /** @test */
+    public function it_returns_rank_of_user_in_rankings()
+    {
+        $items = collect([]);
+
+        $items->push(createRankItemObject(3, '6', '1'));
+        $items->push(createRankItemObject(2, '5', '2'));
+        $items->push(createRankItemObject(1, '4', '3'));
+
+        $query = new UserRankingsBuilder();
+        $query->initialize($items, 1);
+
+        $this->assertEquals('3rd', $query->getUserRank());
     }
 }

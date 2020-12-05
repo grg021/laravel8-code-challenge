@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
@@ -51,27 +53,30 @@ class CourseEnrollmentController extends Controller
             return view('courses.show', ['course' => $course]);
         }
 
-        $rankings = $this->rankingsQuery->course($course->id)->get();
+        $rankingsForCourse = $this->rankingsQuery->course($course->id);
 
-        $worldRankings = $this->sectionsBuilder
-            ->initialize($rankings, $user->id)
+        $worldRanking = $this->sectionsBuilder
+            ->initialize($rankingsForCourse->get(), $user->id)
             ->build()
             ->transform(RankItem::class)
             ->get();
 
-        $rankings = $this->rankingsQuery->course($course->id)->country($user->country_code)->get();
+        $worldRank = $this->sectionsBuilder->getUserRank();
 
-        $countryRankings = $this->sectionsBuilder
-            ->initialize($rankings, $user->id)
+        $rankingsByCountry = $this->rankingsQuery->course($course->id)->country($user->country_code);
+
+        $countryRanking = $this->sectionsBuilder
+            ->initialize($rankingsByCountry->get(), $user->id)
             ->build()
             ->transform(RankItem::class)
             ->get();
 
-        return view('courseEnrollments.show', [
-            'enrollment' => $enrollment,
-            'countryRanking' => $countryRankings,
-            'worldRanking' => $worldRankings
-        ]);
+        $countryRank = $this->sectionsBuilder->getUserRank();
+
+        return view(
+            'courseEnrollments.show',
+            compact('enrollment', 'countryRanking', 'countryRank', 'worldRanking', 'worldRank')
+        );
     }
 
     public function store(string $courseSlug): RedirectResponse

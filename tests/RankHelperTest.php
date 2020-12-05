@@ -85,4 +85,18 @@ class RankHelperTest extends TestCase
 
         $this->assertEquals($expectedData, rank($data));
     }
+
+    /** @test */
+    public function it_converts_rank_into_string()
+    {
+        $this->assertEquals('1st', ordinal(1));
+        $this->assertEquals('2nd', ordinal(2));
+        $this->assertEquals('3rd', ordinal(3));
+        $this->assertEquals('4th', ordinal(4));
+        $this->assertEquals('21st', ordinal(21));
+        $this->assertEquals('32nd', ordinal(32));
+        $this->assertEquals('43rd', ordinal(43));
+        $this->assertEquals('100th', ordinal(100));
+    }
+
 }

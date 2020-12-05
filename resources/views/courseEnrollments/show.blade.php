@@ -34,7 +34,7 @@
                         </p>
                         <div class="row">
                             <div class="col-md-6">
-                                <h4>You are ranked <b>4th</b> in {{ auth()->user()->country->name }}</h4>
+                                <h4>You are ranked <b>{{ $countryRank }}</b> in {{ auth()->user()->country->name }}</h4>
                                 {{--Replace this stub markup by your code--}}
                                 <ul style="padding: 0px;">
                                     @include('courseEnrollments.rankings', ['rankings' => $countryRanking])
@@ -42,7 +42,7 @@
 
                             </div>
                             <div class="col-md-6">
-                                <h4>You are ranked <b>90th</b> Worldwide</h4>
+                                <h4>You are ranked <b>{{ $worldRank }}</b> Worldwide</h4>
                                 {{--Replace this stub markup by your code--}}
                                 <ul style="padding: 0px;">
                                     @include('courseEnrollments.rankings', ['rankings' => $worldRanking])

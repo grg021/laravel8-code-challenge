@@ -13,5 +13,6 @@ interface SectionsBuilder
     public function build();
     public function transform($transformer);
     public function get();
+    public function getUserRank();
 
 }
