@@ -17,17 +17,30 @@ class Section implements Pipe
         return $next($content);
     }
 
-    protected function getSizeBasedOnUserPosition($minimumSize, $list, $userId): int
+    protected function removeItemsFromList(Collection $list, Collection $originalList)
+    {
+        return $originalList->splice($list->count());
+    }
+
+    /**
+     * @param $rankItems
+     * @param  int  $size
+     * @param $userId
+     * @return int
+     */
+    protected function determineSizeForSection($rankItems, $userId, $maxSize): int
+    {
+        return ($rankItems->count() <= $maxSize)
+            ? $maxSize
+            : $this->getSizeBasedOnUserPosition($rankItems, $userId);
+    }
+
+    protected function getSizeBasedOnUserPosition($list, $userId): int
     {
 
         $pos = getUserPosition($list, $userId);
 
-        return ($pos > $minimumSize || $pos <= 0) ? $minimumSize : $pos + 2;
-    }
-
-    protected function removeItemsFromList(Collection $list, Collection $originalList)
-    {
-        return $originalList->splice($list->count());
+        return ($pos > self::MIN_SIZE || $pos <= 0) ? self::MIN_SIZE : $pos + 2;
     }
 
 }

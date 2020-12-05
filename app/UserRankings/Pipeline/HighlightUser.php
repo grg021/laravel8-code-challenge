@@ -21,6 +21,6 @@ class HighlightUser implements Pipe
             $rankItem->highlight = 1;
             $list->splice($pos, 1, [$rankItem]);
         }
-        return $next($list);
+        return $next([$list, $userId]);
     }
 }

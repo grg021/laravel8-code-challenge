@@ -8,18 +8,18 @@ class BuildMiddleSection extends Section
 {
     public function handle($content, Closure $next)
     {
-
-        $list = $content[0];
+        // TODO use pojo
+        $rankItems = $content[0];
         $userId = $content[1];
         $sections = $content[2];
         $bottomList = $content[3];
 
         $middle = collect([]);
-        $pos = getUserPosition($list, $userId);
+        $pos = getUserPosition($rankItems, $userId);
         if ($pos > -1) {
-            $middle->push($list[$pos-1]);
-            $middle->push($list[$pos]);
-            $middle->push($list[$pos+1]);
+            $middle->push($rankItems[$pos-1]);
+            $middle->push($rankItems[$pos]);
+            $middle->push($rankItems[$pos+1]);
         }
 
         $sections->push($middle);

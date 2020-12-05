@@ -2,6 +2,7 @@
 
 namespace App\UserRankings;
 
+use App\UserRankings\Pipeline\AddPointDifference;
 use App\UserRankings\Pipeline\BuildBottomSection;
 use App\UserRankings\Pipeline\BuildMiddleSection;
 use App\UserRankings\Pipeline\BuildTopSection;
@@ -32,8 +33,6 @@ class UserRankingsBuilder implements RankingsBuilderInterface
         $this->prepareRankItems();
 
         $this->buildSections();
-
-        $this->addDiffInfo();
 
         return $this;
     }
@@ -66,20 +65,6 @@ class UserRankingsBuilder implements RankingsBuilderInterface
         }
     }
 
-    private function addDiffInfo()
-    {
-        foreach ($this->sections as $section) {
-            $pos = getUserPosition($section, $this->userId);
-            if ($pos > -1) {
-                foreach ($section as $key => $item) {
-                    if ($item->user_id != $section[$pos]->user_id && $key < $pos) {
-                        $item->points_diff = $item->points - $section[$pos]->points;
-                    }
-                }
-            }
-        }
-    }
-
     protected function prepareRankItems(): void
     {
         $this->rankItems = app(Pipeline::class)
@@ -87,6 +72,7 @@ class UserRankingsBuilder implements RankingsBuilderInterface
             ->through([
                 PrioritizeUser::class,
                 HighlightUser::class,
+                AddPointDifference::class
             ])
             ->then(function ($content) {
                 return $content;

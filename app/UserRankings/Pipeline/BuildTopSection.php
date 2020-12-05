@@ -11,22 +11,19 @@ class BuildTopSection extends Section
 
     public function handle($content, Closure $next)
     {
-
-        $list = $content[0];
+        // TODO use pojo
+        $rankItems = $content[0];
         $userId = $content[1];
         $sections = $content[2];
 
-        $size = self::MIN_SIZE;
+        $size = $this->determineSizeForSection($rankItems, $userId, self::MAX_SIZE);
 
-        $size = ($list->count() <= self::MAX_SIZE)
-            ? self::MAX_SIZE
-            : $this->getSizeBasedOnUserPosition($size, $list, $userId);
+        $sectionItems = $rankItems->take($size)->values();
 
-        $sectionItems = $list->take($size)->values();
-
-        $list = $this->removeItemsFromList($sectionItems, $list);
+        $rankItems = $this->removeItemsFromList($sectionItems, $rankItems);
         $sections->push($sectionItems);
 
-        return $next([$list, $userId, $sections]);
+        return $next([$rankItems, $userId, $sections]);
     }
+
 }

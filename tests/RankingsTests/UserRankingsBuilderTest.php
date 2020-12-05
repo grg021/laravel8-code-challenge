@@ -137,7 +137,7 @@ class UserRankingsBuilderTest extends TestCase
     }
 
     /** @test */
-    public function it_only_points_diff_on_rank_items_on_same_section_as_user()
+    public function it_only_adds_points_diff_on_users_ranked_higher()
     {
         $items = collect([]);
 
@@ -154,15 +154,12 @@ class UserRankingsBuilderTest extends TestCase
         $mid = $sections[1];
         $last = $sections->last();
 
-
-        $first->each(function ($item) {
-            $this->assertEquals('0', $item->points_diff);
-        });
-
         $last->each(function ($item) {
             $this->assertEquals('0', $item->points_diff);
         });
-
+        $this->assertEquals(5, $first[0]->points_diff);
+        $this->assertEquals(4, $first[1]->points_diff);
+        $this->assertEquals(3, $first[2]->points_diff);
         $this->assertEquals(1, $mid[0]->points_diff);
 
     }

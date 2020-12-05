@@ -8,24 +8,21 @@ class BuildBottomSection extends Section
 {
     public function handle($content, Closure $next)
     {
-        $list = $content[0];
+        // TODO use pojo
+        $rankItems = $content[0];
         $userId = $content[1];
         $sections = $content[2];
 
         $maxSize = self::MAX_SIZE - $sections->first()->count();
 
-        $list = $list->reverse()->values();
+        $rankItems = $rankItems->reverse()->values();
 
-        $size = self::MIN_SIZE;
+        $size = $this->determineSizeForSection($rankItems, $userId, $maxSize);
 
-        $size = ($list->count() <= $maxSize)
-            ? $maxSize
-            : $this->getSizeBasedOnUserPosition($size, $list, $userId);
+        $sectionItems = $rankItems->take($size)->sortBy('rank')->values();
 
-        $sectionItems = $list->take($size)->sortBy('rank')->values();
+        $rankItems = $this->removeItemsFromList($sectionItems, $rankItems)->reverse()->values();
 
-        $list = $this->removeItemsFromList($sectionItems, $list)->reverse()->values();
-
-        return $next([$list, $userId, $sections, $sectionItems]);
+        return $next([$rankItems, $userId, $sections, $sectionItems]);
     }
 }

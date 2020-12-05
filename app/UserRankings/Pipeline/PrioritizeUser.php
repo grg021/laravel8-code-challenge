@@ -24,6 +24,6 @@ class PrioritizeUser implements Pipe
                 $list->splice($dups->keys()->first(), 0, [$rankItem]);
             }
         }
-        return $next([$list, $pos]);
+        return $next([$list, $userId]);
     }
 }
