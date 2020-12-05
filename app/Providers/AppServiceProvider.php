@@ -2,10 +2,10 @@
 
 namespace App\Providers;
 
-use App\Api\SectionsBuilder;
-use App\Api\UserRankingsBuilder;
-use App\Api\UserRankingsInterface;
-use App\Api\UserRankingsQuery;
+use App\UserRankings\RankingsBuilderInterface;
+use App\UserRankings\UserRankingsBuilder;
+use App\UserRankings\RankingsQueryInterface;
+use App\UserRankings\RankingsQuery;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -18,11 +18,11 @@ class AppServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->bind(
-            UserRankingsInterface::class,
-            UserRankingsQuery::class
+            RankingsQueryInterface::class,
+            RankingsQuery::class
         );
         $this->app->bind(
-            SectionsBuilder::class,
+            RankingsBuilderInterface::class,
             UserRankingsBuilder::class
         );
     }

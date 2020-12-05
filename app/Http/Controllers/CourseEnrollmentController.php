@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Api\SectionsBuilder;
-use App\Api\UserRankingsInterface;
+use App\UserRankings\RankingsBuilderInterface;
+use App\UserRankings\RankingsQueryInterface;
 use App\Models\Course;
 use App\Models\CourseEnrollment;
 use App\Models\RankItem;
-use App\Api\UserRankingsQuery;
+use App\UserRankings\RankingsQuery;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\RedirectResponse;
 
@@ -17,20 +17,20 @@ class CourseEnrollmentController extends Controller
 {
 
     /**
-     * @var UserRankingsQuery
+     * @var RankingsQuery
      */
-    private UserRankingsInterface $rankingsQuery;
+    private RankingsQueryInterface $rankingsQuery;
     /**
-     * @var SectionsBuilder
+     * @var RankingsBuilderInterface
      */
-    private SectionsBuilder $sectionsBuilder;
+    private RankingsBuilderInterface $sectionsBuilder;
 
     /**
      * CourseEnrollmentController constructor.
-     * @param  UserRankingsInterface  $rankingsQuery
-     * @param  SectionsBuilder  $sectionsBuilder
+     * @param  RankingsQueryInterface  $rankingsQuery
+     * @param  RankingsBuilderInterface  $sectionsBuilder
      */
-    public function __construct(UserRankingsInterface $rankingsQuery, SectionsBuilder $sectionsBuilder)
+    public function __construct(RankingsQueryInterface $rankingsQuery, RankingsBuilderInterface $sectionsBuilder)
     {
         $this->rankingsQuery = $rankingsQuery;
         $this->sectionsBuilder = $sectionsBuilder;

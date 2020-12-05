@@ -2,7 +2,7 @@
 
 namespace Tests\integration;
 
-use App\Api\UserRankingsBuilder;
+use App\UserRankings\UserRankingsBuilder;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
 

@@ -1,13 +1,13 @@
 <?php
 
 
-namespace App\Api;
+namespace App\UserRankings;
 
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
-class UserRankingsQuery implements UserRankingsInterface
+class RankingsQuery implements RankingsQueryInterface
 {
     private Builder $query;
     private Collection $rankings;
@@ -22,14 +22,13 @@ class UserRankingsQuery implements UserRankingsInterface
         $this->rankings = collect([]);
     }
 
-
-    public function course($courseId)
+    public function course($courseId): RankingsQueryInterface
     {
         $this->query->where('courses.id', $courseId);
         return $this;
     }
 
-    public function country($countryCode): UserRankingsQuery
+    public function country($countryCode): RankingsQueryInterface
     {
         $this->query->where('users.country_code', $countryCode);
         return $this;

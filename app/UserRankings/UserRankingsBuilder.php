@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Api;
+namespace App\UserRankings;
 
 use Illuminate\Support\Collection;
 
-class UserRankingsBuilder implements SectionsBuilder
+class UserRankingsBuilder implements RankingsBuilderInterface
 {
     private const MIN_SIZE = 3;
     private const MAX_SIZE = 9;
@@ -17,7 +17,7 @@ class UserRankingsBuilder implements SectionsBuilder
     private int $userId;
     private $userRankItem;
 
-    public function initialize(Collection $rankings, int $userId)
+    public function initialize(Collection $rankings, int $userId): RankingsBuilderInterface
     {
         $this->sections = collect([]);
         $this->sectionItems = collect([]);
@@ -28,7 +28,7 @@ class UserRankingsBuilder implements SectionsBuilder
         return $this;
     }
 
-    public function build()
+    public function build(): RankingsBuilderInterface
     {
 
         $this->prioritizeUserIfSameRank();
@@ -64,11 +64,16 @@ class UserRankingsBuilder implements SectionsBuilder
         return $this;
     }
 
-    public function get()
+    public function get(): Collection
     {
         return $this->sections->filter(function ($section) {
             return $section->count();
         })->values();
+    }
+
+    public function getUserRank(): string
+    {
+        return ($this->userRankItem) ? ordinal($this->userRankItem->rank) : '';
     }
 
     private function getSectionItems(): Collection
@@ -169,8 +174,4 @@ class UserRankingsBuilder implements SectionsBuilder
         }
     }
 
-    public function getUserRank()
-    {
-        return ($this->userRankItem) ? ordinal($this->userRankItem->rank) : '';
-    }
 }
