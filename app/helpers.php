@@ -16,11 +16,11 @@ if (! function_exists('rank')) {
         return $data;
     }
 }
-if (! function_exists('createRankItemObject')) {
-    function createRankItemObject($userId, $points, $rank): object
+if (! function_exists('createLeaderboardItem')) {
+    function createLeaderboardItem($userId, $points, $rank): object
     {
         return (object) [
-            'user_id' => $userId,
+            'userId' => $userId,
             'points' => $points,
             'rank' => $rank,
             'highlight' => 0,
@@ -33,7 +33,7 @@ if (! function_exists('getUserPosition')) {
     function getUserPosition(Collection $list, $userId)
     {
         $pos = $list->search(function ($item) use ($userId) {
-            return $item->user_id == $userId;
+            return $item->userId == $userId;
         });
         return ($pos !== false) ? $pos : -1;
     }

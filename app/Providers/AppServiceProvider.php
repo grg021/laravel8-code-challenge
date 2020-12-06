@@ -2,8 +2,8 @@
 
 namespace App\Providers;
 
-use App\UserRankings\LeaderboardBuilder;
-use App\UserRankings\LeaderboardImpl;
+use App\Leaderboards\LeaderboardBuilder;
+use App\Leaderboards\LeaderboardImpl;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider

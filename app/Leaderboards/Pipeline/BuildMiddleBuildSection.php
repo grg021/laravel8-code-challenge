@@ -1,17 +1,17 @@
 <?php
 
-namespace App\UserRankings\Pipeline;
+namespace App\Leaderboards\Pipeline;
 
-use App\UserRankings\Popo\BuildSectionContent;
+use App\Leaderboards\Leaderboard;
 
 class BuildMiddleBuildSection extends BuildSection
 {
 
     /**
-     * @param  BuildSectionContent  $content
-     * @return BuildSectionContent
+     * @param  Leaderboard  $content
+     * @return Leaderboard
      */
-    public function build(BuildSectionContent $content): BuildSectionContent
+    public function build(Leaderboard $content): Leaderboard
     {
         $middle = collect([]);
         $pos = getUserPosition($content->rankItems, $content->userId);
@@ -24,8 +24,7 @@ class BuildMiddleBuildSection extends BuildSection
 
         $content->sections->push($middle);
         $content->sections->push($content->sectionItems);
-
-        $content->sections->filter(function ($section) {
+        $content->sections = $content->sections->filter(function ($section) {
             return $section->count();
         });
 

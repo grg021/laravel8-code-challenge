@@ -1,8 +1,8 @@
 <?php
 
-namespace App\UserRankings\Pipeline;
+namespace App\Leaderboards\Pipeline;
 
-use App\UserRankings\Popo\BuildSectionContent;
+use App\Leaderboards\Leaderboard;
 use Closure;
 use Illuminate\Support\Collection;
 
@@ -22,10 +22,10 @@ class BuildSection implements Pipe
     }
 
     /**
-     * @param  BuildSectionContent  $content
-     * @return BuildSectionContent
+     * @param  Leaderboard  $content
+     * @return Leaderboard
      */
-    protected function build(BuildSectionContent $content): BuildSectionContent
+    protected function build(Leaderboard $content): Leaderboard
     {
         return $content;
     }

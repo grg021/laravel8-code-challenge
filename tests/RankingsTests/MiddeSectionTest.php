@@ -2,7 +2,7 @@
 
 namespace Tests\RankingsTests;
 
-use App\UserRankings\LeaderboardImpl;
+use App\Leaderboards\LeaderboardImpl;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
 
@@ -16,7 +16,7 @@ class MiddeSectionTest extends TestCase
         $items = collect([]);
 
         foreach (range(10, 1) as $n) {
-            $items->push(createRankItemObject($n, $n, '1'));
+            $items->push(createLeaderboardItem($n, $n, '1'));
         }
 
         $items = rank($items->sortByDesc('points')->values());
@@ -38,7 +38,7 @@ class MiddeSectionTest extends TestCase
         $items = collect([]);
 
         foreach (range(10, 1) as $n) {
-            $items->push(createRankItemObject($n, $n, '1'));
+            $items->push(createLeaderboardItem($n, $n, '1'));
         }
 
         $items = rank($items->sortByDesc('points')->values());
@@ -47,7 +47,7 @@ class MiddeSectionTest extends TestCase
         $query->initialize($items, 5);
         $sections = $query->build()->get();
         $this->assertCount(3, $sections[1]);
-        $this->assertEquals(5, $sections[1][1]->user_id);
+        $this->assertEquals(5, $sections[1][1]->userId);
     }
 
     /** @test */
@@ -56,15 +56,15 @@ class MiddeSectionTest extends TestCase
         $items = collect([]);
 
         foreach (range(12, 8) as $n) {
-            $items->push(createRankItemObject($n, 3, '1'));
+            $items->push(createLeaderboardItem($n, 3, '1'));
         }
 
         foreach (range(7, 5) as $n) {
-            $items->push(createRankItemObject($n, 2, '2'));
+            $items->push(createLeaderboardItem($n, 2, '2'));
         }
 
         foreach (range(4, 1) as $n) {
-            $items->push(createRankItemObject($n, 1, '3'));
+            $items->push(createLeaderboardItem($n, 1, '3'));
         }
 
         $items = rank($items->sortByDesc('points')->values());
@@ -75,7 +75,7 @@ class MiddeSectionTest extends TestCase
 
         $this->assertCount(3, $sections);
         $this->assertCount(3, $sections[1]);
-        $this->assertEquals(6, $sections[1][1]->user_id);
+        $this->assertEquals(6, $sections[1][1]->userId);
     }
 
 }

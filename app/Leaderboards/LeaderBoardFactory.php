@@ -1,8 +1,6 @@
 <?php
 
-
-namespace App\UserRankings;
-
+namespace App\Leaderboards;
 
 use App\Models\RankItem;
 
@@ -14,11 +12,20 @@ class LeaderBoardFactory
      */
     private LeaderboardBuilder $builder;
 
+    /**
+     * LeaderBoardFactory constructor.
+     * @param  LeaderboardBuilder  $builder
+     */
     public function __construct(LeaderboardBuilder $builder)
     {
         $this->builder = $builder;
     }
 
+    /**
+     * @param $rankList
+     * @param $userId
+     * @return \Illuminate\Support\Collection
+     */
     public function getLeaderboard($rankList, $userId)
     {
         return $this->builder
@@ -27,5 +34,4 @@ class LeaderBoardFactory
             ->transform(RankItem::class)
             ->get();
     }
-
 }

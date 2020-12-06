@@ -38,7 +38,7 @@ abstract class TestCase extends BaseTestCase
     public function checkValues($actual, array $expectedValues): void
     {
         foreach($expectedValues as $key => $expected) {
-            $this->assertEquals($expected[0], $actual[$key]->user_id);
+            $this->assertEquals($expected[0], $actual[$key]->userId);
             $this->assertEquals($expected[1], $actual[$key]->points);
         }
     }

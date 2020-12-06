@@ -1,6 +1,6 @@
 <?php
 
-namespace App\UserRankings\Pipeline;
+namespace App\Leaderboards\Pipeline;
 
 use Closure;
 

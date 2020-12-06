@@ -6,7 +6,7 @@
         {{ $rank->rank }}
     </div>
     <div class="info">
-        <div class="{{ isset($rank->highlight) ? 'font-weight-bold' : '' }}" style="font-size: 16px;">
+        <div class="{{ ($rank->highlight == '1') ? 'font-weight-bold' : '' }}" style="font-size: 16px;">
             {{ $rank->title }}
         </div>
         <div class="score" style="font-size: 10px; color: rgb(132, 132, 132);">

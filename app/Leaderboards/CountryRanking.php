@@ -1,14 +1,22 @@
 <?php
 
-namespace App\UserRankings;
+namespace App\Leaderboards;
 
 use Illuminate\Database\Query\Builder;
 
 class CountryRanking extends WorldRanking
 {
 
+    /**
+     * @var string
+     */
     protected string $country;
 
+    /**
+     * CountryRanking constructor.
+     * @param $courseId
+     * @param $country
+     */
     public function __construct($courseId, $country)
     {
         parent::__construct($courseId);

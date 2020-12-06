@@ -1,9 +1,8 @@
 <?php
 
-namespace Tests;
+namespace Tests\RankingsTests;
 
-use App\UserRankings\LeaderboardImpl;
-use PHPUnit\Framework\TestCase;
+use Tests\TestCase;
 
 class RankHelperTest extends TestCase
 {
@@ -14,23 +13,23 @@ class RankHelperTest extends TestCase
         $data = collect([
             (object) [
                 'points' => 10,
-                'user_id' => 1
+                'userId' => 1
             ],
             (object) [
                 'points' => 9,
-                'user_id' => 2
+                'userId' => 2
             ],
         ]);
 
         $expectedData = collect([
             (object) [
                 'points' => 10,
-                'user_id' => 1,
+                'userId' => 1,
                 'rank' => 1
             ],
             (object) [
                 'points' => 9,
-                'user_id' => 2,
+                'userId' => 2,
                 'rank' => 2
             ],
         ]);
@@ -45,41 +44,41 @@ class RankHelperTest extends TestCase
         $data = collect([
             (object) [
                 'points' => 10,
-                'user_id' => 1,
+                'userId' => 1,
             ],
             (object) [
                 'points' => 9,
-                'user_id' => 2
+                'userId' => 2
             ],
             (object) [
                 'points' => 9,
-                'user_id' => 3
+                'userId' => 3
             ],
             (object) [
                 'points' => 5,
-                'user_id' => 4
+                'userId' => 4
             ],
         ]);
 
         $expectedData = collect([
             (object) [
                 'points' => 10,
-                'user_id' => 1,
+                'userId' => 1,
                 'rank' => 1
             ],
             (object) [
                 'points' => 9,
-                'user_id' => 2,
+                'userId' => 2,
                 'rank' => 2
             ],
             (object) [
                 'points' => 9,
-                'user_id' => 3,
+                'userId' => 3,
                 'rank' => 2
             ],
             (object) [
                 'points' => 5,
-                'user_id' => 4,
+                'userId' => 4,
                 'rank' => 3
             ],
         ]);
@@ -105,9 +104,9 @@ class RankHelperTest extends TestCase
     {
         $items = collect([]);
 
-        $items->push(createRankItemObject(3, '6', '1'));
-        $items->push(createRankItemObject(2, '5', '2'));
-        $items->push(createRankItemObject(1, '4', '3'));
+        $items->push(createLeaderboardItem(3, '6', '1'));
+        $items->push(createLeaderboardItem(2, '5', '2'));
+        $items->push(createLeaderboardItem(1, '4', '3'));
 
         $this->assertEquals('3rd', getUserRank($items, 1));
     }

@@ -1,11 +1,11 @@
 <?php
 
-namespace App\UserRankings\Pipeline;
+namespace App\Leaderboards\Pipeline;
 
-use App\UserRankings\Popo\PrepareRankingsContent;
+use App\Leaderboards\Leaderboard;
 use Closure;
 
-class PrioritizeUser implements Pipe
+class RankAndPrioritizeUser implements Pipe
 {
 
     /**
@@ -19,11 +19,12 @@ class PrioritizeUser implements Pipe
     }
 
     /**
-     * @param  PrepareRankingsContent  $content
-     * @return PrepareRankingsContent
+     * @param  Leaderboard  $content
+     * @return Leaderboard
      */
-    protected function execute(PrepareRankingsContent $content): PrepareRankingsContent
+    protected function execute(Leaderboard $content): Leaderboard
     {
+        $content->rankItems = rank($content->rankItems);
         $pos = getUserPosition($content->rankItems, $content->userId);
 
         if ($pos > -1) {
@@ -31,7 +32,7 @@ class PrioritizeUser implements Pipe
 
             $dups = $content->rankItems->where('rank', $rankItem->rank);
 
-            if ($dups->count() > 1 and $dups->first()->user_id != $rankItem->user_id) {
+            if ($dups->count() > 1 and $dups->first()->userId != $rankItem->userId) {
                 $content->rankItems->splice($pos, 1);
                 $content->rankItems->splice($dups->keys()->first(), 0, [$rankItem]);
             }

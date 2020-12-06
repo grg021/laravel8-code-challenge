@@ -2,7 +2,7 @@
 
 namespace Tests\RankingsTests;
 
-use App\UserRankings\LeaderboardImpl;
+use App\Leaderboards\LeaderboardImpl;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
 
@@ -17,7 +17,7 @@ class BottomSectionTest extends TestCase
         $items = collect([]);
 
         foreach (range(10, 1) as $n) {
-            $items->push(createRankItemObject($n, $n, '1'));
+            $items->push(createLeaderboardItem($n, $n, '1'));
         }
 
         $items = rank($items->sortByDesc('points')->values());
@@ -29,9 +29,9 @@ class BottomSectionTest extends TestCase
         $this->assertCount(2, $sections);
         $section = $sections->last();
 
-        $this->assertEquals('3', $section[0]->user_id);
-        $this->assertEquals('2', $section[1]->user_id);
-        $this->assertEquals('1', $section[2]->user_id);
+        $this->assertEquals('3', $section[0]->userId);
+        $this->assertEquals('2', $section[1]->userId);
+        $this->assertEquals('1', $section[2]->userId);
 
     }
 
@@ -41,7 +41,7 @@ class BottomSectionTest extends TestCase
         $items = collect([]);
 
         foreach (range(10, 1) as $n) {
-            $items->push(createRankItemObject($n, $n, '1'));
+            $items->push(createLeaderboardItem($n, $n, '1'));
         }
 
         $items = rank($items->sortByDesc('points')->values());
@@ -55,10 +55,10 @@ class BottomSectionTest extends TestCase
         $this->assertCount(4, $section);
 
 
-        $this->assertEquals('4', $section[0]->user_id);
-        $this->assertEquals('3', $section[1]->user_id);
-        $this->assertEquals('2', $section[2]->user_id);
-        $this->assertEquals('1', $section[3]->user_id);
+        $this->assertEquals('4', $section[0]->userId);
+        $this->assertEquals('3', $section[1]->userId);
+        $this->assertEquals('2', $section[2]->userId);
+        $this->assertEquals('1', $section[3]->userId);
     }
 
     /** @test */
@@ -67,7 +67,7 @@ class BottomSectionTest extends TestCase
         $items = collect([]);
 
         foreach (range(10, 1) as $n) {
-            $items->push(createRankItemObject($n, $n, '1'));
+            $items->push(createLeaderboardItem($n, $n, '1'));
         }
 
         $items = rank($items->sortByDesc('points')->values());
@@ -81,11 +81,11 @@ class BottomSectionTest extends TestCase
         $this->assertCount(5, $section);
 
 
-        $this->assertEquals('5', $section[0]->user_id);
-        $this->assertEquals('4', $section[1]->user_id);
-        $this->assertEquals('3', $section[2]->user_id);
-        $this->assertEquals('2', $section[3]->user_id);
-        $this->assertEquals('1', $section[4]->user_id);
+        $this->assertEquals('5', $section[0]->userId);
+        $this->assertEquals('4', $section[1]->userId);
+        $this->assertEquals('3', $section[2]->userId);
+        $this->assertEquals('2', $section[3]->userId);
+        $this->assertEquals('1', $section[4]->userId);
     }
 
 

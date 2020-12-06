@@ -1,8 +1,8 @@
 <?php
 
-namespace App\UserRankings\Pipeline;
+namespace App\Leaderboards\Pipeline;
 
-use App\UserRankings\Popo\PrepareRankingsContent;
+use App\Leaderboards\Leaderboard;
 use Closure;
 
 class HighlightUser implements Pipe
@@ -19,10 +19,10 @@ class HighlightUser implements Pipe
     }
 
     /**
-     * @param  PrepareRankingsContent  $content
-     * @return PrepareRankingsContent
+     * @param  Leaderboard  $content
+     * @return Leaderboard
      */
-    public function execute(PrepareRankingsContent $content)
+    protected function execute(Leaderboard $content): Leaderboard
     {
         $pos = getUserPosition($content->rankItems, $content->userId);
         if ($pos > -1) {

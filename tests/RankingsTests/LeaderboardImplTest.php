@@ -2,11 +2,11 @@
 
 namespace Tests\RankingsTests;
 
-use App\UserRankings\LeaderboardImpl;
+use App\Leaderboards\LeaderboardImpl;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
 
-class UserRankingsBuilderTest extends TestCase
+class LeaderboardImplTest extends TestCase
 {
     use DatabaseMigrations;
 
@@ -18,7 +18,7 @@ class UserRankingsBuilderTest extends TestCase
         foreach (range(10, 1) as $key => $item) {
             $items->push((object) [
                 'points' => '1',
-                'user_id' => $item,
+                'userId' => $item,
                 'rank' => 1,
             ]);
         }
@@ -52,7 +52,7 @@ class UserRankingsBuilderTest extends TestCase
         foreach (range(21, 1) as $key => $item) {
             $items->push((object) [
                 'points' => $item,
-                'user_id' => $item,
+                'userId' => $item,
                 'rank' => $key + 1,
             ]);
         }
@@ -78,7 +78,7 @@ class UserRankingsBuilderTest extends TestCase
         foreach (range(21, 1) as $key => $item) {
             $items->push((object) [
                 'points' => $item,
-                'user_id' => $item,
+                'userId' => $item,
                 'rank' => $key + 1,
             ]);
         }
@@ -100,7 +100,7 @@ class UserRankingsBuilderTest extends TestCase
         foreach (range(3, 1) as $key => $item) {
             $items->push((object) [
                 'points' => '1',
-                'user_id' => $item,
+                'userId' => $item,
                 'rank' => 1,
             ]);
         }
@@ -109,18 +109,18 @@ class UserRankingsBuilderTest extends TestCase
         $query->initialize($items, 1);
         $actual = $query->build()->get();
 
-        $this->assertEquals(1, $actual->first()->first()->user_id);
+        $this->assertEquals(1, $actual->first()->first()->userId);
     }
 
     /** @test */
-    public function it_highlights_logged_in_user()
+    public function it_highlights_logged_in_user_only()
     {
         $items = collect([]);
 
         foreach (range(2, 1) as $key => $item) {
             $items->push((object) [
                 'points' => '1',
-                'user_id' => $item,
+                'userId' => $item,
                 'rank' => 1,
                 'highlight' => 0,
                 'points_diff' => '0'
@@ -142,7 +142,7 @@ class UserRankingsBuilderTest extends TestCase
         $items = collect([]);
 
         foreach (range(10, 1) as $key => $item) {
-            $items->push(createRankItemObject($item, $item, $key + 1));
+            $items->push(createLeaderboardItem($item, $item, $key + 1));
         }
 
         $query = new LeaderboardImpl();
@@ -169,9 +169,9 @@ class UserRankingsBuilderTest extends TestCase
     {
         $items = collect([]);
 
-        $items->push(createRankItemObject(6, '6', '1'));
-        $items->push(createRankItemObject(5, '5', '2'));
-        $items->push(createRankItemObject(4, '4', '3'));
+        $items->push(createLeaderboardItem(6, '6', '1'));
+        $items->push(createLeaderboardItem(5, '5', '2'));
+        $items->push(createLeaderboardItem(4, '4', '3'));
 
         $query = new LeaderboardImpl();
         $query->initialize($items, 5);

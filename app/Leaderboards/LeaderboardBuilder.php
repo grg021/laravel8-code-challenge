@@ -1,8 +1,7 @@
 <?php
 
 
-namespace App\UserRankings;
-
+namespace App\Leaderboards;
 
 use Illuminate\Support\Collection;
 

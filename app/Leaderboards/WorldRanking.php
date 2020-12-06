@@ -1,6 +1,6 @@
 <?php
 
-namespace App\UserRankings;
+namespace App\Leaderboards;
 
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Collection;
@@ -9,8 +9,15 @@ use Illuminate\Support\Facades\DB;
 class WorldRanking implements CourseRankings
 {
 
+    /**
+     * @var Builder
+     */
     protected Builder $query;
 
+    /**
+     * WorldRanking constructor.
+     * @param $courseId
+     */
     public function __construct($courseId)
     {
         $this->query = DB::table('quiz_answers')
@@ -33,13 +40,12 @@ class WorldRanking implements CourseRankings
      */
     public function get(): Collection
     {
-        $rankings = $this->filter()
-            ->selectRaw('sum(score) as points, quiz_answers.user_id, 0 as highlight, 0 as points_diff ')
+        return $this->filter()
+            ->selectRaw('sum(score) as points, quiz_answers.user_id')
             ->groupBy('quiz_answers.user_id')
             ->orderByDesc('points')
             ->orderBy('name')
-            ->get();
-
-        return rank($rankings);
+            ->get()
+            ->mapInto(LeaderboardItem::class);
     }
 }

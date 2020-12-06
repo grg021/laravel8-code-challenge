@@ -1,18 +1,19 @@
 <?php
 
-namespace App\UserRankings\Pipeline;
+namespace App\Leaderboards\Pipeline;
 
-use App\UserRankings\Popo\BuildSectionContent;
+use App\Leaderboards\Leaderboard;
 
 class BuildBottomBuildSection extends BuildSection
 {
 
     /**
-     * @param  BuildSectionContent  $content
-     * @return BuildSectionContent
+     * @param  Leaderboard  $content
+     * @return Leaderboard
      */
-    public function build(BuildSectionContent $content): BuildSectionContent
+    public function build(Leaderboard $content): Leaderboard
     {
+
         $maxSize = self::MAX_SIZE - $content->sections->first()->count();
         $rankItems = $content->rankItems->reverse()->values();
         $size = $this->determineSizeForSection($rankItems, $content->userId, $maxSize);

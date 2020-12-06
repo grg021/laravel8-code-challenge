@@ -1,8 +1,8 @@
 <?php
 
-namespace App\UserRankings\Pipeline;
+namespace App\Leaderboards\Pipeline;
 
-use App\UserRankings\Popo\PrepareRankingsContent;
+use App\Leaderboards\Leaderboard;
 use Closure;
 
 class AddPointDifference implements Pipe
@@ -19,15 +19,15 @@ class AddPointDifference implements Pipe
     }
 
     /**
-     * @param  PrepareRankingsContent  $content
-     * @return PrepareRankingsContent
+     * @param  Leaderboard  $content
+     * @return Leaderboard
      */
-    public function execute(PrepareRankingsContent $content)
+    protected function execute(Leaderboard $content): Leaderboard
     {
         $pos = getUserPosition($content->rankItems, $content->userId);
         if ($pos > -1) {
             foreach ($content->rankItems as $key => $item) {
-                if ($item->user_id != $content->rankItems[$pos]->user_id && $key < $pos) {
+                if ($item->userId != $content->rankItems[$pos]->userId && $key < $pos) {
                     $item->points_diff = $item->points - $content->rankItems[$pos]->points;
                 }
             }

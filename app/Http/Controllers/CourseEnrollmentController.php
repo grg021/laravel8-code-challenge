@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\UserRankings\CountryRanking;
-use App\UserRankings\LeaderBoardFactory;
-use App\UserRankings\LeaderboardBuilder;
+use App\Leaderboards\CountryRanking;
+use App\Leaderboards\LeaderBoardFactory;
+use App\Leaderboards\LeaderboardBuilder;
 use App\Models\Course;
 use App\Models\CourseEnrollment;
-use App\UserRankings\WorldRanking;
+use App\Leaderboards\WorldRanking;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\RedirectResponse;
 

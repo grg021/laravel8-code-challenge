@@ -2,14 +2,15 @@
 
 namespace Tests\RankingsTests;
 
+use App\Leaderboards\LeaderboardItem;
 use App\Models\Country;
 use App\Models\Course;
 use App\Models\CourseEnrollment;
 use App\Models\User;
-use App\UserRankings\CountryRanking;
-use App\UserRankings\CourseRankingsQuery;
-use App\UserRankings\WorldRanking;
+use App\Leaderboards\CountryRanking;
+use App\Leaderboards\WorldRanking;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Illuminate\Support\Collection;
 use Tests\TestCase;
 
 class RankingsQueryTest extends TestCase
@@ -17,26 +18,28 @@ class RankingsQueryTest extends TestCase
     use DatabaseMigrations;
 
     /** @test */
-    public function it_returns_a_collection_of_userid_and_points_of_a_course_sorted_by_points()
+    public function returns_list_sorted_by_points_desc_then_name_asc()
     {
         $course = Course::factory()->create();
         $quiz = $this->makeQuiz($course);
 
-        User::factory()->count(3)->create();
+        User::factory()->create();
+        User::factory()->create(['name' => 'Bob']);
+        User::factory()->create(['name' => 'Anna']);
+        User::factory()->create(['name' => 'Cat']);
 
-        $this->makeQuizAnswer(1, $quiz, 1);
-        $this->makeQuizAnswer(3, $quiz, 7);
+        $this->makeQuizAnswer(1, $quiz, 7);
         $this->makeQuizAnswer(2, $quiz, 5);
+        $this->makeQuizAnswer(3, $quiz, 5);
+        $this->makeQuizAnswer(4, $quiz, 5);
 
-        $query = new WorldRanking($course->id);
+        $list = (new WorldRanking($course->id))->get();
 
-        $expectedValues = [
-            ['3', '7'],
-            ['2', '5'],
-            ['1', '1'],
-        ];
-
-        $this->checkValues($query->get(), $expectedValues);
+        $this->assertEquals(7, $list[0]->points);
+        $this->assertEquals(5, $list[1]->points);
+        $this->assertEquals(3, $list[1]->userId);
+        $this->assertEquals(2, $list[2]->userId);
+        $this->assertEquals(4, $list[3]->userId);
     }
 
     /** @test */
@@ -95,31 +98,22 @@ class RankingsQueryTest extends TestCase
     }
 
     /** @test */
-    public function returns_list_sorted_by_points_desc_then_name_asc()
+    public function it_returns_a_collection_of_leaderboard_items()
     {
         $course = Course::factory()->create();
         $quiz = $this->makeQuiz($course);
 
         User::factory()->create();
-        User::factory()->create(['name' => 'Bob']);
-        User::factory()->create(['name' => 'Anna']);
-        User::factory()->create(['name' => 'Cat']);
 
-        $this->makeQuizAnswer(1, $quiz, 7);
-        $this->makeQuizAnswer(2, $quiz, 5);
-        $this->makeQuizAnswer(3, $quiz, 5);
-        $this->makeQuizAnswer(4, $quiz, 5);
+        $this->makeQuizAnswer(1, $quiz, 1);
 
         $list = (new WorldRanking($course->id))->get();
 
-        $this->assertEquals(7, $list[0]->points);
-        $this->assertEquals(5, $list[1]->points);
-        $this->assertEquals(3, $list[1]->user_id);
-        $this->assertEquals(2, $list[2]->user_id);
-        $this->assertEquals(4, $list[3]->user_id);
+        $this->assertInstanceOf(Collection::class, $list);
+        $this->assertInstanceOf(LeaderboardItem::class, $list->first());
+
     }
 
-    /** @test */
     public function it_returns_ranked_list()
     {
         $course = Course::factory()->create();
