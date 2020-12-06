@@ -3,6 +3,7 @@
 namespace Tests\RankingsTests;
 
 use App\Leaderboards\LeaderboardImpl;
+use App\Leaderboards\LeaderboardItem;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
 
@@ -16,11 +17,11 @@ class LeaderboardImplTest extends TestCase
         $items = collect([]);
 
         foreach (range(10, 1) as $key => $item) {
-            $items->push((object) [
+            $items->push(new LeaderboardItem((object) [
+                'name' => 'Greg',
+                'user_id' => $item,
                 'points' => '1',
-                'userId' => $item,
-                'rank' => 1,
-            ]);
+            ]));
         }
 
         $query = new LeaderboardImpl();
@@ -50,11 +51,13 @@ class LeaderboardImplTest extends TestCase
         $items = collect([]);
 
         foreach (range(21, 1) as $key => $item) {
-            $items->push((object) [
+            $item = new LeaderboardItem((object) [
+                'name' => 'Greg',
+                'user_id' => $item,
                 'points' => $item,
-                'userId' => $item,
-                'rank' => $key + 1,
             ]);
+            $item->rank = $key + 1;
+            $items->push($item);
         }
         return [
             [clone $items, 1],
@@ -76,11 +79,13 @@ class LeaderboardImplTest extends TestCase
         $items = collect([]);
 
         foreach (range(21, 1) as $key => $item) {
-            $items->push((object) [
+            $item = new LeaderboardItem((object) [
+                'name' => 'Greg',
+                'user_id' => $item,
                 'points' => $item,
-                'userId' => $item,
-                'rank' => $key + 1,
             ]);
+            $item->rank = $key + 1;
+            $items->push($item);
         }
 
         $query = new LeaderboardImpl();
@@ -98,11 +103,13 @@ class LeaderboardImplTest extends TestCase
         $items = collect([]);
 
         foreach (range(3, 1) as $key => $item) {
-            $items->push((object) [
-                'points' => '1',
-                'userId' => $item,
-                'rank' => 1,
+            $item = new LeaderboardItem((object) [
+                'name' => 'Greg',
+                'user_id' => $item,
+                'points' => 1,
             ]);
+            $item->rank = 1;
+            $items->push($item);
         }
 
         $query = new LeaderboardImpl();
@@ -118,13 +125,13 @@ class LeaderboardImplTest extends TestCase
         $items = collect([]);
 
         foreach (range(2, 1) as $key => $item) {
-            $items->push((object) [
-                'points' => '1',
-                'userId' => $item,
-                'rank' => 1,
-                'highlight' => 0,
-                'points_diff' => '0'
+            $item = new LeaderboardItem((object) [
+                'name' => 'Greg',
+                'user_id' => $item,
+                'points' => 1,
             ]);
+            $item->rank = 1;
+            $items->push($item);
         }
 
         $query = new LeaderboardImpl();

@@ -1,5 +1,6 @@
 <?php
 
+use App\Leaderboards\LeaderboardItem;
 use Illuminate\Support\Collection;
 
 if (! function_exists('rank')) {
@@ -19,13 +20,13 @@ if (! function_exists('rank')) {
 if (! function_exists('createLeaderboardItem')) {
     function createLeaderboardItem($userId, $points, $rank): object
     {
-        return (object) [
-            'userId' => $userId,
+        $item = new LeaderboardItem((object) [
+            'name' => 'Greg',
+            'user_id' => $userId,
             'points' => $points,
-            'rank' => $rank,
-            'highlight' => 0,
-            'points_diff' => '0'
-        ];
+        ]);
+        $item->rank = $rank;
+        return $item;
     }
 }
 

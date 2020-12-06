@@ -24,12 +24,9 @@ class AddPointDifference implements Pipe
      */
     protected function execute(Leaderboard $content): Leaderboard
     {
-        $pos = getUserPosition($content->rankItems, $content->userId);
-        if ($pos > -1) {
-            foreach ($content->rankItems as $key => $item) {
-                if ($key < $pos) {
-                    $item->points_diff = $item->points - $content->rankItems[$pos]->points;
-                }
+        foreach ($content->rankItems as $key => $item) {
+            if ($key < $content->userKey) {
+                $item->points_diff = $item->points - $content->userItem->points;
             }
         }
         return $content;
