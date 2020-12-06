@@ -102,12 +102,13 @@ class RankHelperTest extends TestCase
     /** @test */
     public function it_returns_user_rank()
     {
+
         $items = collect([]);
 
         $items->push(createLeaderboardItem(3, '6', '1'));
         $items->push(createLeaderboardItem(2, '5', '2'));
         $items->push(createLeaderboardItem(1, '4', '3'));
 
-        $this->assertEquals('3rd', getUserRank($items, 1));
+        $this->assertEquals('3rd', getUserRank(collect([$items]), 1));
     }
 }

@@ -40,4 +40,21 @@ class Leaderboard
         $this->sections = collect();
         $this->sectionItems = collect();
     }
+
+    /**
+     * @return string
+     */
+    public function getUserRank(): string
+    {
+        return getUserRank($this->sections, $this->userId);
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getSections(): Collection
+    {
+        return $this->sections->values();
+    }
+
 }

@@ -52,12 +52,15 @@ if (! function_exists('ordinal')) {
 }
 
 if (! function_exists('getUserRank')) {
-    function getUserRank(Collection $rankItems, int $userId): string
+    function getUserRank(Collection $sections, int $userId): string
     {
-        $pos = getUserPosition($rankItems, $userId);
-        if ($pos > -1) {
-            return ordinal($rankItems[$pos]->rank);
+        foreach ($sections as $section) {
+                $pos = getUserPosition($section, $userId);
+            if ($pos > -1) {
+                return ordinal($section[$pos]->rank);
+            }
         }
+
         return '';
     }
 }

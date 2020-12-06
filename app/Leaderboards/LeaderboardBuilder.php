@@ -23,16 +23,9 @@ interface LeaderboardBuilder
     public function build(): LeaderboardBuilder;
 
     /**
-     * @param $transformer
-     * @return LeaderboardBuilder
-     * Transform each item in the list to an object for front-end consumption
-     */
-    public function transform($transformer): LeaderboardBuilder;
-
-    /**
-     * @return Collection
+     * @return Leaderboard
      * Get the collection of sections of rank items
      */
-    public function get(): Collection;
+    public function get(): Leaderboard;
 
 }

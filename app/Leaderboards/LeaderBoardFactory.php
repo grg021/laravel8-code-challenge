@@ -2,8 +2,6 @@
 
 namespace App\Leaderboards;
 
-use App\Models\RankItem;
-
 class LeaderBoardFactory
 {
 
@@ -22,16 +20,16 @@ class LeaderBoardFactory
     }
 
     /**
-     * @param $rankList
+     * @param  CourseRankings  $rankings
      * @param $userId
-     * @return \Illuminate\Support\Collection
+     * @return Leaderboard
      */
-    public function getLeaderboard($rankList, $userId)
+    public function getLeaderboard(CourseRankings $rankings, $userId): Leaderboard
     {
+        $rankList = $rankings->get();
         return $this->builder
             ->initialize($rankList, $userId)
             ->build()
-            ->transform(RankItem::class)
             ->get();
     }
 }

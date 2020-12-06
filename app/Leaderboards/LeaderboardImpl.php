@@ -57,11 +57,11 @@ class LeaderboardImpl implements LeaderboardBuilder
     }
 
     /**
-     * @return Collection
+     * @return Leaderboard
      */
-    public function get(): Collection
+    public function get(): Leaderboard
     {
-        return $this->leaderBoard->sections->values();
+        return $this->leaderBoard;
     }
 
     /**

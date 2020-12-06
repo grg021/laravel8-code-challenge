@@ -24,10 +24,10 @@ class BottomSectionTest extends TestCase
 
         $query = new LeaderboardImpl();
         $query->initialize($items, 1);
-        $sections = $query->build()->get();
+        $leaderboard = $query->build()->get();
 
-        $this->assertCount(2, $sections);
-        $section = $sections->last();
+        $this->assertCount(2, $leaderboard->sections);
+        $section = $leaderboard->sections->last();
 
         $this->assertEquals('3', $section[0]->userId);
         $this->assertEquals('2', $section[1]->userId);
@@ -48,10 +48,10 @@ class BottomSectionTest extends TestCase
 
         $query = new LeaderboardImpl();
         $query->initialize($items, 3);
-        $sections = $query->build()->get();
+        $leaderboard = $query->build()->get();
 
-        $this->assertCount(2, $sections);
-        $section = $sections->last();
+        $this->assertCount(2, $leaderboard->sections);
+        $section = $leaderboard->sections->last();
         $this->assertCount(4, $section);
 
 
@@ -74,10 +74,10 @@ class BottomSectionTest extends TestCase
 
         $query = new LeaderboardImpl();
         $query->initialize($items, 4);
-        $sections = $query->build()->get();
+        $leaderboard = $query->build()->get();
 
-        $this->assertCount(2, $sections);
-        $section = $sections->last();
+        $this->assertCount(2, $leaderboard->sections);
+        $section = $leaderboard->sections->last();
         $this->assertCount(5, $section);
 
 

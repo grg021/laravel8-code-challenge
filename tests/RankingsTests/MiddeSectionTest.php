@@ -23,7 +23,7 @@ class MiddeSectionTest extends TestCase
 
         $query = new LeaderboardImpl();
         $query->initialize($items, 5);
-        $sections = $query->build()->get();
+        $sections = $query->build()->get()->sections;
 
 
         $this->assertCount(3, $sections);
@@ -45,7 +45,7 @@ class MiddeSectionTest extends TestCase
 
         $query = new LeaderboardImpl();
         $query->initialize($items, 5);
-        $sections = $query->build()->get();
+        $sections = $query->build()->get()->sections;
         $this->assertCount(3, $sections[1]);
         $this->assertEquals(5, $sections[1][1]->userId);
     }
@@ -71,7 +71,7 @@ class MiddeSectionTest extends TestCase
 
         $query = new LeaderboardImpl();
         $query->initialize($items, 6);
-        $sections = $query->build()->get();
+        $sections = $query->build()->get()->sections;
 
         $this->assertCount(3, $sections);
         $this->assertCount(3, $sections[1]);

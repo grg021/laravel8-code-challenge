@@ -47,20 +47,19 @@ class CourseEnrollmentController extends Controller
             return view('courses.show', ['course' => $course]);
         }
 
-        $worldRankList = (new WorldRanking($course->id))->get();
-        $worldRank = getUserRank($worldRankList, $user->id);
-        $worldRanking = (new LeaderBoardFactory($this->sectionsBuilder))
-            ->getLeaderboard($worldRankList, $user->id);
+        $worldLeaderboard = (new LeaderBoardFactory($this->sectionsBuilder))
+            ->getLeaderboard((new WorldRanking($course->id)), $user->id);
 
-        $countryRankList = (new CountryRanking($course->id, $user->country_code))->get();
-        $countryRank = getUserRank($countryRankList, $user->id);
-        $countryRanking = (new LeaderBoardFactory($this->sectionsBuilder))
-            ->getLeaderboard($countryRankList, $user->id);
+        $countryLeaderboard = (new LeaderBoardFactory($this->sectionsBuilder))
+            ->getLeaderboard((new CountryRanking($course->id, $user->country_code)), $user->id);
 
-        return view(
-            'courseEnrollments.show',
-            compact('enrollment', 'countryRanking', 'countryRank', 'worldRanking', 'worldRank')
-        );
+        return view('courseEnrollments.show', [
+                'enrollment' => $enrollment,
+                'countryRanking' => $countryLeaderboard->getSections(),
+                'countryRank' => $countryLeaderboard->getUserRank(),
+                'worldRanking' => $worldLeaderboard->getSections(),
+                'worldRank' => $worldLeaderboard->getUserRank(),
+            ]);
     }
 
     public function store(string $courseSlug): RedirectResponse
@@ -72,5 +71,4 @@ class CourseEnrollmentController extends Controller
 
         return redirect()->action([self::class, 'show'], [$course->slug]);
     }
-
 }

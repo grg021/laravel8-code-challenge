@@ -2,6 +2,7 @@
 
 namespace Tests\RankingsTests;
 
+use App\Leaderboards\CourseRankings;
 use App\Leaderboards\LeaderboardBuilder;
 use App\Leaderboards\LeaderBoardFactory;
 use Tests\TestCase;
@@ -16,10 +17,13 @@ class LeaderboardFactoryTest extends TestCase
         $bulder = $this->mock(LeaderboardBuilder::class, function ($mock) {
             $mock->shouldReceive('initialize')->once()->andReturnSelf();
             $mock->shouldReceive('build')->once()->andReturnSelf();
-            $mock->shouldReceive('transform')->once()->andReturnSelf();
             $mock->shouldReceive('get')->once();
         });
 
-        (new LeaderBoardFactory($bulder))->getLeaderboard(collect(), 1);
+        $rankings = $this->mock(CourseRankings::class, function ($mock) {
+            $mock->shouldReceive('get');
+        });
+
+        (new LeaderBoardFactory($bulder))->getLeaderboard($rankings, 1);
     }
 }
