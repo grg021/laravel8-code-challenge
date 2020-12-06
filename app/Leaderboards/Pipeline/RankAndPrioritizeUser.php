@@ -31,6 +31,7 @@ class RankAndPrioritizeUser implements Pipe
             $itemsWithSameRank = $content->rankItems->where('rank', $content->userItem->rank);
             $this->moveUserToTop($itemsWithSameRank, $content->userItem, $content);
         }
+
         return $content;
     }
 
@@ -47,6 +48,7 @@ class RankAndPrioritizeUser implements Pipe
         if ($itemsWithSameRank->count() > 1 and $itemsWithSameRank->first()->userId != $rankItem->userId) {
             $content->rankItems->splice($content->userKey, 1);
             $content->rankItems->splice($itemsWithSameRank->keys()->first(), 0, [$rankItem]);
+            $content->updateUserKey();
         }
     }
 }

@@ -88,8 +88,8 @@ class LeaderboardImpl implements LeaderboardBuilder
             ->send($this->leaderBoard)
             ->through([
                 BuildTopBuildSection::class,
-                BuildBottomBuildSection::class,
                 BuildMiddleBuildSection::class,
+                BuildBottomBuildSection::class,
             ])
             ->thenReturn();
     }

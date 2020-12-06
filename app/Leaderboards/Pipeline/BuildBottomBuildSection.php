@@ -2,25 +2,29 @@
 
 namespace App\Leaderboards\Pipeline;
 
-use App\Leaderboards\Leaderboard;
+use Illuminate\Support\Collection;
 
 class BuildBottomBuildSection extends BuildSection
 {
 
     /**
-     * @param  Leaderboard  $content
-     * @return Leaderboard
+     * @param  Collection  $rankItems
+     * @param  int  $userKey
+     * @return int|mixed
      */
-    public function build(Leaderboard $content): Leaderboard
+    protected function getIndex(Collection $rankItems, int $userKey)
     {
 
-        $maxSize = self::MAX_SIZE - $content->sections->first()->count();
-        $rankItems = $content->rankItems->reverse()->values();
-        $size = $this->determineSizeForSection($rankItems, $content->userId, $maxSize);
-        $content->sectionItems = $rankItems->take($size)->reverse()->values();
-        $content->rankItems = $this->removeItemsFromList($content->sectionItems, $rankItems)->reverse()->values();
+        if ($rankItems->count() <= self::MAX_SIZE) {
+            return $rankItems->count();
+        }
 
-        return $content;
+        $lastKey = $rankItems->keys()->last();
+
+        if ($lastKey - 2  === $userKey || $lastKey - 3 === $userKey) {
+            return $userKey - 1;
+        }
+
+        return $rankItems->count() - self::MIN_SIZE;
     }
-
 }

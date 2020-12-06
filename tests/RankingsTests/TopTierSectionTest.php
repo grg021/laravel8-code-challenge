@@ -21,9 +21,10 @@ class TopTierSectionTest extends TestCase
 
         $query = new LeaderboardImpl();
         $query->initialize($items, 1);
-        $sections = $query->build()->get()->sections;
+        $sections = $query->build()->get()->getSections();
 
         $this->assertCount(1, $sections);
+        $this->assertCount(9, $sections->first());
     }
 
     /** @test */
@@ -36,21 +37,21 @@ class TopTierSectionTest extends TestCase
 
         $query = new LeaderboardImpl();
         $query->initialize($items, 6);
-        $sections = $query->build()->get()->sections;
+        $sections = $query->build()->get()->getSections();
 
         $this->assertCount(1, $sections);
         $this->assertCount(1, $sections->first());
 
         $items->push(createLeaderboardItem(5, '5', '2'));
         $query->initialize($items, 6);
-        $sections = $query->build()->get()->sections;
+        $sections = $query->build()->get()->getSections();
 
         $this->assertCount(1, $sections);
         $this->assertCount(2, $sections->first());
 
         $items->push(createLeaderboardItem(4, '4', '3'));
         $query->initialize($items, 6);
-        $sections = $query->build()->get()->sections;
+        $sections = $query->build()->get()->getSections();
 
         $this->assertCount(1, $sections);
         $this->assertCount(3, $sections->first());

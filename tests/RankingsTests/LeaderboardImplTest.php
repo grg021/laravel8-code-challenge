@@ -27,7 +27,7 @@ class LeaderboardImplTest extends TestCase
         $query = new LeaderboardImpl();
         $query->initialize($items, 1);
         $leaderboard = $query->build()->get();
-        $sections = $leaderboard->sections;
+        $sections = $leaderboard->getSections();
         $this->assertCount(2, $sections);
         $this->assertCount(3, $sections->first());
         $this->assertCount(3, $sections->last());
@@ -39,11 +39,15 @@ class LeaderboardImplTest extends TestCase
      * @param $items
      * @param $userId
      */
-    public function it_returns_2_sections_if_user_is_in_top_or_bottom_4($items, $userId)
+    public function it_returns_2_sections_if_user_is_in_top_or_bottom_3($items, $userId, $top, $bottom)
     {
         $query = new LeaderboardImpl();
         $query->initialize($items, $userId);
-        $this->assertCount(2, $query->build()->get()->sections);
+        $leaderboard = $query->build()->get();
+        $sections = $leaderboard->getSections();
+        $this->assertCount(2, $sections);
+        $this->assertCount($top, $sections->first());
+        $this->assertCount($bottom, $sections->last());
     }
 
     public function itemsAndUserId()
@@ -60,14 +64,14 @@ class LeaderboardImplTest extends TestCase
             $items->push($item);
         }
         return [
-            [clone $items, 1],
-            [clone $items, 2],
-            [clone $items, 3],
-            [clone $items, 4],
-            [clone $items, 21],
-            [clone $items, 20],
-            [clone $items, 19],
-            [clone $items, 18],
+            [clone $items, 21, 3, 3],
+            [clone $items, 20, 3, 3],
+            [clone $items, 19, 4, 3],
+            [clone $items, 18, 5, 3],
+            [clone $items, 1, 3, 3],
+            [clone $items, 2, 3, 3],
+            [clone $items, 3, 3, 4],
+            [clone $items, 4, 3, 5],
         ];
     }
 
@@ -91,7 +95,7 @@ class LeaderboardImplTest extends TestCase
         $query = new LeaderboardImpl();
         $query->initialize($items, 10);
 
-        $sections = $query->build()->get()->sections;
+        $sections = $query->build()->get()->getSections();
 
         $this->assertEquals(3, $sections->count());
     }
@@ -116,7 +120,7 @@ class LeaderboardImplTest extends TestCase
         $query->initialize($items, 1);
         $leaderboard = $query->build()->get();
 
-        $this->assertEquals(1, $leaderboard->sections->first()->first()->userId);
+        $this->assertEquals(1, $leaderboard->getSections()->first()->first()->userId);
     }
 
     /** @test */
@@ -137,7 +141,7 @@ class LeaderboardImplTest extends TestCase
         $query = new LeaderboardImpl();
         $query->initialize($items, 1);
         $leaderboard = $query->build()->get();
-        $section = $leaderboard->sections;
+        $section = $leaderboard->getSections();
 
         $this->assertSameSize($items, $section->first());
         $this->assertEquals(1, $section->first()[0]->highlight);
@@ -156,14 +160,15 @@ class LeaderboardImplTest extends TestCase
         $query = new LeaderboardImpl();
         $query->initialize($items, 5);
         $leaderboard = $query->build()->get();
-        $sections = $leaderboard->sections;
+        $sections = $leaderboard->getSections();
+
 
         $first = $sections->first();
         $mid = $sections[1];
         $last = $sections->last();
 
         $last->each(function ($item) {
-            $this->assertEquals('0', $item->points_diff);
+            $this->assertEquals(0, $item->points_diff);
         });
         $this->assertEquals(5, $first[0]->points_diff);
         $this->assertEquals(4, $first[1]->points_diff);
@@ -183,7 +188,7 @@ class LeaderboardImplTest extends TestCase
         $query = new LeaderboardImpl();
         $query->initialize($items, 5);
 
-        $first = $query->build()->get()->sections->first();
+        $first = $query->build()->get()->getSections()->first();
 
         $this->assertEquals(1, $first[0]->points_diff);
         $this->assertEquals('0', $first[1]->points_diff);

@@ -26,8 +26,8 @@ class BottomSectionTest extends TestCase
         $query->initialize($items, 1);
         $leaderboard = $query->build()->get();
 
-        $this->assertCount(2, $leaderboard->sections);
-        $section = $leaderboard->sections->last();
+        $this->assertCount(2, $leaderboard->getSections());
+        $section = $leaderboard->getSections()->last();
 
         $this->assertEquals('3', $section[0]->userId);
         $this->assertEquals('2', $section[1]->userId);
@@ -50,8 +50,8 @@ class BottomSectionTest extends TestCase
         $query->initialize($items, 3);
         $leaderboard = $query->build()->get();
 
-        $this->assertCount(2, $leaderboard->sections);
-        $section = $leaderboard->sections->last();
+        $this->assertCount(2, $leaderboard->getSections());
+        $section = $leaderboard->getSections()->last();
         $this->assertCount(4, $section);
 
 
@@ -76,8 +76,8 @@ class BottomSectionTest extends TestCase
         $query->initialize($items, 4);
         $leaderboard = $query->build()->get();
 
-        $this->assertCount(2, $leaderboard->sections);
-        $section = $leaderboard->sections->last();
+        $this->assertCount(2, $leaderboard->getSections());
+        $section = $leaderboard->getSections()->last();
         $this->assertCount(5, $section);
 
 

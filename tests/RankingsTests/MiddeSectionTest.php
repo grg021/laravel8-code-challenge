@@ -23,7 +23,7 @@ class MiddeSectionTest extends TestCase
 
         $query = new LeaderboardImpl();
         $query->initialize($items, 5);
-        $sections = $query->build()->get()->sections;
+        $sections = $query->build()->get()->getSections();
 
 
         $this->assertCount(3, $sections);
@@ -45,37 +45,9 @@ class MiddeSectionTest extends TestCase
 
         $query = new LeaderboardImpl();
         $query->initialize($items, 5);
-        $sections = $query->build()->get()->sections;
+        $sections = $query->build()->get()->getSections();
         $this->assertCount(3, $sections[1]);
         $this->assertEquals(5, $sections[1][1]->userId);
-    }
-
-    /** @test */
-    public function it_returns_middle_section_with_user_padding_if_any()
-    {
-        $items = collect([]);
-
-        foreach (range(12, 8) as $n) {
-            $items->push(createLeaderboardItem($n, 3, '1'));
-        }
-
-        foreach (range(7, 5) as $n) {
-            $items->push(createLeaderboardItem($n, 2, '2'));
-        }
-
-        foreach (range(4, 1) as $n) {
-            $items->push(createLeaderboardItem($n, 1, '3'));
-        }
-
-        $items = rank($items->sortByDesc('points')->values());
-
-        $query = new LeaderboardImpl();
-        $query->initialize($items, 6);
-        $sections = $query->build()->get()->sections;
-
-        $this->assertCount(3, $sections);
-        $this->assertCount(3, $sections[1]);
-        $this->assertEquals(6, $sections[1][1]->userId);
     }
 
 }

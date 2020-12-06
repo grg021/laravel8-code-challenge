@@ -2,32 +2,28 @@
 
 namespace App\Leaderboards\Pipeline;
 
-use App\Leaderboards\Leaderboard;
+use Illuminate\Support\Collection;
 
 class BuildMiddleBuildSection extends BuildSection
 {
 
     /**
-     * @param  Leaderboard  $content
-     * @return Leaderboard
+     * @param  Collection  $rankItems
+     * @param  int  $userKey
+     * @return int
      */
-    public function build(Leaderboard $content): Leaderboard
+    protected function getIndex(Collection $rankItems, int $userKey)
     {
-        $middle = collect([]);
-        $pos = getUserPosition($content->rankItems, $content->userId);
+        return ($userKey > 4 && $userKey < $rankItems->count() - 4) ? $userKey - 1 : 0;
+    }
 
-        if ($pos > -1) {
-            $middle->push($content->rankItems[$pos-1]);
-            $middle->push($content->rankItems[$pos]);
-            $middle->push($content->rankItems[$pos+1]);
-        }
-
-        $content->sections->push($middle);
-        $content->sections->push($content->sectionItems);
-        $content->sections = $content->sections->filter(function ($section) {
-            return $section->count();
-        });
-
-        return $content;
+    /**
+     * @param  Collection  $rankItems
+     * @param  int  $userKey
+     * @return int
+     */
+    protected function getLimit(Collection $rankItems, int $userKey)
+    {
+        return ($userKey > 4 && $userKey < $rankItems->count() - 4) ? self::MIN_SIZE : 0;
     }
 }

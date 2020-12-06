@@ -63,19 +63,25 @@ class Leaderboard
      */
     public function getSections(): Collection
     {
-        return $this->sections->values();
+        return $this->sections->filter(function (Collection $section) {
+            return $section->count();
+        })->values();
     }
 
+    /**
+     * @return mixed|null
+     */
     public function getUserItem()
     {
-
         if ($this->userKey > -1) {
             return $this->rankItems[$this->userKey];
         }
-
         return null;
     }
 
+    /**
+     * @return int|mixed
+     */
     public function getUserKey()
     {
         return getUserPosition($this->rankItems, $this->userId);
@@ -88,5 +94,13 @@ class Leaderboard
     {
         $this->userKey = $this->getUserKey();
         $this->userItem = $this->getUserItem();
+    }
+
+    /**
+     * Update user key
+     */
+    public function updateUserKey()
+    {
+        $this->userKey = $this->getUserKey();
     }
 }

@@ -27,37 +27,33 @@ class BuildSection implements Pipe
      */
     protected function build(Leaderboard $content): Leaderboard
     {
+
+        $index = $this->getIndex($content->rankItems, $content->userKey);
+        $limit = $this->getLimit($content->rankItems, $content->userKey);
+
+        $section = $content->rankItems->slice($index, $limit);
+        $content->sections->push($section->values());
+
         return $content;
     }
 
     /**
-     * @param  Collection  $list
-     * @param  Collection  $originalList
-     * @return Collection
+     * @param  Collection  $rankItems
+     * @param  int  $userKey
+     * @return int
      */
-    protected function removeItemsFromList(Collection $list, Collection $originalList): Collection
+    protected function getIndex(Collection $rankItems, int $userKey)
     {
-        return $originalList->splice($list->count());
+        return 0;
     }
 
     /**
-     * @param $rankItems
-     * @param  int  $size
-     * @param $userId
+     * @param  Collection  $rankItems
+     * @param  int  $userKey
      * @return int
      */
-    protected function determineSizeForSection($rankItems, $userId, $maxSize): int
+    protected function getLimit(Collection $rankItems, int $userKey)
     {
-        return ($rankItems->count() <= $maxSize)
-            ? $maxSize
-            : $this->getSizeBasedOnUserPosition($rankItems, $userId);
-    }
-
-    protected function getSizeBasedOnUserPosition($list, $userId): int
-    {
-
-        $pos = getUserPosition($list, $userId);
-
-        return ($pos > self::MIN_SIZE || $pos <= 0) ? self::MIN_SIZE : $pos + 2;
+        return $rankItems->count();
     }
 }
