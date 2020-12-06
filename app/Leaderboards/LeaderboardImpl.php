@@ -6,6 +6,7 @@ use App\Leaderboards\Pipeline\AddPointDifference;
 use App\Leaderboards\Pipeline\BuildBottomBuildSection;
 use App\Leaderboards\Pipeline\BuildMiddleBuildSection;
 use App\Leaderboards\Pipeline\BuildTopBuildSection;
+use App\Leaderboards\Pipeline\HighlightUser;
 use App\Leaderboards\Pipeline\RankAndPrioritizeUser;
 use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Collection;
@@ -71,6 +72,7 @@ class LeaderboardImpl implements LeaderboardBuilder
         $this->leaderBoard = app(Pipeline::class)
             ->send($this->leaderBoard)
             ->through([
+                HighlightUser::class,
                 RankAndPrioritizeUser::class,
                 AddPointDifference::class
             ])

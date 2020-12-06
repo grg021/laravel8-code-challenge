@@ -88,8 +88,5 @@ class Leaderboard
     {
         $this->userKey = $this->getUserKey();
         $this->userItem = $this->getUserItem();
-        if ($this->userKey > -1) {
-            $this->rankItems[$this->userKey]->highlight = 1;
-        }
     }
 }
