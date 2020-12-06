@@ -2,7 +2,7 @@
 
 namespace Tests\RankingsTests;
 
-use App\UserRankings\UserRankingsBuilder;
+use App\UserRankings\LeaderboardImpl;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
 
@@ -22,7 +22,7 @@ class BottomSectionTest extends TestCase
 
         $items = rank($items->sortByDesc('points')->values());
 
-        $query = new UserRankingsBuilder();
+        $query = new LeaderboardImpl();
         $query->initialize($items, 1);
         $sections = $query->build()->get();
 
@@ -46,7 +46,7 @@ class BottomSectionTest extends TestCase
 
         $items = rank($items->sortByDesc('points')->values());
 
-        $query = new UserRankingsBuilder();
+        $query = new LeaderboardImpl();
         $query->initialize($items, 3);
         $sections = $query->build()->get();
 
@@ -72,7 +72,7 @@ class BottomSectionTest extends TestCase
 
         $items = rank($items->sortByDesc('points')->values());
 
-        $query = new UserRankingsBuilder();
+        $query = new LeaderboardImpl();
         $query->initialize($items, 4);
         $sections = $query->build()->get();
 

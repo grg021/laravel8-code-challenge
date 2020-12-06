@@ -2,7 +2,7 @@
 
 namespace Tests;
 
-use App\UserRankings\UserRankingsBuilder;
+use App\UserRankings\LeaderboardImpl;
 use PHPUnit\Framework\TestCase;
 
 class RankHelperTest extends TestCase

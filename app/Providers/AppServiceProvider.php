@@ -2,8 +2,8 @@
 
 namespace App\Providers;
 
-use App\UserRankings\RankingsBuilderInterface;
-use App\UserRankings\UserRankingsBuilder;
+use App\UserRankings\LeaderboardBuilder;
+use App\UserRankings\LeaderboardImpl;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -16,8 +16,8 @@ class AppServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->bind(
-            RankingsBuilderInterface::class,
-            UserRankingsBuilder::class
+            LeaderboardBuilder::class,
+            LeaderboardImpl::class
         );
     }
 

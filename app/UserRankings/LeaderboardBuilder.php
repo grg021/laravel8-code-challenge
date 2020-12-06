@@ -6,29 +6,29 @@ namespace App\UserRankings;
 
 use Illuminate\Support\Collection;
 
-interface RankingsBuilderInterface
+interface LeaderboardBuilder
 {
 
     /**
      * @param  Collection  $rankings
      * @param  int  $userId
-     * @return RankingsBuilderInterface
+     * @return LeaderboardBuilder
      * Initialize the builder with the user rankings list and id of the logged in user
      */
-    public function initialize(Collection $rankings, int $userId): RankingsBuilderInterface;
+    public function initialize(Collection $rankings, int $userId): LeaderboardBuilder;
 
     /**
-     * @return RankingsBuilderInterface
+     * @return LeaderboardBuilder
      * Build the rankings list
      */
-    public function build(): RankingsBuilderInterface;
+    public function build(): LeaderboardBuilder;
 
     /**
      * @param $transformer
-     * @return RankingsBuilderInterface
+     * @return LeaderboardBuilder
      * Transform each item in the list to an object for front-end consumption
      */
-    public function transform($transformer): RankingsBuilderInterface;
+    public function transform($transformer): LeaderboardBuilder;
 
     /**
      * @return Collection

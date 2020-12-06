@@ -10,11 +10,11 @@ class LeaderBoardFactory
 {
 
     /**
-     * @var RankingsBuilderInterface
+     * @var LeaderboardBuilder
      */
-    private RankingsBuilderInterface $builder;
+    private LeaderboardBuilder $builder;
 
-    public function __construct(RankingsBuilderInterface $builder)
+    public function __construct(LeaderboardBuilder $builder)
     {
         $this->builder = $builder;
     }

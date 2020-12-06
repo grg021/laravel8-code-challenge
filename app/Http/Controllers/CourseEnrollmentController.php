@@ -6,7 +6,7 @@ namespace App\Http\Controllers;
 
 use App\UserRankings\CountryRanking;
 use App\UserRankings\LeaderBoardFactory;
-use App\UserRankings\RankingsBuilderInterface;
+use App\UserRankings\LeaderboardBuilder;
 use App\Models\Course;
 use App\Models\CourseEnrollment;
 use App\UserRankings\WorldRanking;
@@ -17,15 +17,15 @@ class CourseEnrollmentController extends Controller
 {
 
     /**
-     * @var RankingsBuilderInterface
+     * @var LeaderboardBuilder
      */
-    private RankingsBuilderInterface $sectionsBuilder;
+    private LeaderboardBuilder $sectionsBuilder;
 
     /**
      * CourseEnrollmentController constructor.
-     * @param  RankingsBuilderInterface  $sectionsBuilder
+     * @param  LeaderboardBuilder  $sectionsBuilder
      */
-    public function __construct(RankingsBuilderInterface $sectionsBuilder)
+    public function __construct(LeaderboardBuilder $sectionsBuilder)
     {
         $this->sectionsBuilder = $sectionsBuilder;
     }

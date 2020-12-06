@@ -13,13 +13,13 @@ use App\UserRankings\Popo\PrepareRankingsContent;
 use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Collection;
 
-class UserRankingsBuilder implements RankingsBuilderInterface
+class LeaderboardImpl implements LeaderboardBuilder
 {
     private Collection $rankItems;
     private Collection $sections;
     private int $userId;
 
-    public function initialize(Collection $rankings, int $userId): RankingsBuilderInterface
+    public function initialize(Collection $rankings, int $userId): LeaderboardBuilder
     {
         $this->sections = collect([]);
         $this->rankItems = $rankings;
@@ -27,7 +27,7 @@ class UserRankingsBuilder implements RankingsBuilderInterface
         return $this;
     }
 
-    public function build(): RankingsBuilderInterface
+    public function build(): LeaderboardBuilder
     {
 
         $this->prepareRankItems();
@@ -37,7 +37,7 @@ class UserRankingsBuilder implements RankingsBuilderInterface
         return $this;
     }
 
-    public function transform($transformer): RankingsBuilderInterface
+    public function transform($transformer): LeaderboardBuilder
     {
         $this->sections = $this->sections->map(function (Collection $section) use ($transformer) {
             return $section->mapInto($transformer);

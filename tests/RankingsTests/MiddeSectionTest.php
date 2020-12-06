@@ -2,7 +2,7 @@
 
 namespace Tests\RankingsTests;
 
-use App\UserRankings\UserRankingsBuilder;
+use App\UserRankings\LeaderboardImpl;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
 
@@ -21,7 +21,7 @@ class MiddeSectionTest extends TestCase
 
         $items = rank($items->sortByDesc('points')->values());
 
-        $query = new UserRankingsBuilder();
+        $query = new LeaderboardImpl();
         $query->initialize($items, 5);
         $sections = $query->build()->get();
 
@@ -43,7 +43,7 @@ class MiddeSectionTest extends TestCase
 
         $items = rank($items->sortByDesc('points')->values());
 
-        $query = new UserRankingsBuilder();
+        $query = new LeaderboardImpl();
         $query->initialize($items, 5);
         $sections = $query->build()->get();
         $this->assertCount(3, $sections[1]);
@@ -69,7 +69,7 @@ class MiddeSectionTest extends TestCase
 
         $items = rank($items->sortByDesc('points')->values());
 
-        $query = new UserRankingsBuilder();
+        $query = new LeaderboardImpl();
         $query->initialize($items, 6);
         $sections = $query->build()->get();
 

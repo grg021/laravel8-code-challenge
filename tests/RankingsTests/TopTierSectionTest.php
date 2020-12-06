@@ -4,7 +4,7 @@ namespace Tests\RankingsTests;
 
 use App\Models\Course;
 use App\Models\User;
-use App\UserRankings\UserRankingsBuilder;
+use App\UserRankings\LeaderboardImpl;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
 
@@ -21,7 +21,7 @@ class TopTierSectionTest extends TestCase
             $items->push(createRankItemObject($item, '1', '1'));
         }
 
-        $query = new UserRankingsBuilder();
+        $query = new LeaderboardImpl();
         $query->initialize($items, 1);
         $sections = $query->build()->get();
 
@@ -37,7 +37,7 @@ class TopTierSectionTest extends TestCase
 
         $items->push(createRankItemObject(6, '6', '1'));
 
-        $query = new UserRankingsBuilder();
+        $query = new LeaderboardImpl();
         $query->initialize($items, 6);
         $sections = $query->build()->get();
 

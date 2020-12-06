@@ -2,7 +2,7 @@
 
 namespace Tests\RankingsTests;
 
-use App\UserRankings\UserRankingsBuilder;
+use App\UserRankings\LeaderboardImpl;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
 
@@ -23,7 +23,7 @@ class UserRankingsBuilderTest extends TestCase
             ]);
         }
 
-        $query = new UserRankingsBuilder();
+        $query = new LeaderboardImpl();
         $query->initialize($items, 1);
         $sections = $query->build()->get();
 
@@ -40,7 +40,7 @@ class UserRankingsBuilderTest extends TestCase
      */
     public function it_returns_2_sections_if_user_is_in_top_or_bottom_4($items, $userId)
     {
-        $query = new UserRankingsBuilder();
+        $query = new LeaderboardImpl();
         $query->initialize($items, $userId);
         $this->assertCount(2, $query->build()->get());
     }
@@ -83,7 +83,7 @@ class UserRankingsBuilderTest extends TestCase
             ]);
         }
 
-        $query = new UserRankingsBuilder();
+        $query = new LeaderboardImpl();
         $query->initialize($items, 10);
 
         $actual = $query->build()->get();
@@ -105,7 +105,7 @@ class UserRankingsBuilderTest extends TestCase
             ]);
         }
 
-        $query = new UserRankingsBuilder();
+        $query = new LeaderboardImpl();
         $query->initialize($items, 1);
         $actual = $query->build()->get();
 
@@ -127,7 +127,7 @@ class UserRankingsBuilderTest extends TestCase
             ]);
         }
 
-        $query = new UserRankingsBuilder();
+        $query = new LeaderboardImpl();
         $query->initialize($items, 1);
         $actual = $query->build()->get();
 
@@ -145,7 +145,7 @@ class UserRankingsBuilderTest extends TestCase
             $items->push(createRankItemObject($item, $item, $key + 1));
         }
 
-        $query = new UserRankingsBuilder();
+        $query = new LeaderboardImpl();
         $query->initialize($items, 5);
         $sections = $query->build()->get();
 
@@ -173,7 +173,7 @@ class UserRankingsBuilderTest extends TestCase
         $items->push(createRankItemObject(5, '5', '2'));
         $items->push(createRankItemObject(4, '4', '3'));
 
-        $query = new UserRankingsBuilder();
+        $query = new LeaderboardImpl();
         $query->initialize($items, 5);
 
         $first = $query->build()->get()->first();
