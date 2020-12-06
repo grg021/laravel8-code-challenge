@@ -41,7 +41,7 @@ class WorldRanking implements CourseRankings
     public function get(): Collection
     {
         return $this->filter()
-            ->selectRaw('sum(score) as points, quiz_answers.user_id')
+            ->selectRaw('users.name, sum(score) as points, quiz_answers.user_id')
             ->groupBy('quiz_answers.user_id')
             ->orderByDesc('points')
             ->orderBy('name')

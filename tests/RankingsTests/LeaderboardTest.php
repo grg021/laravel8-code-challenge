@@ -17,6 +17,7 @@ class LeaderboardTest extends TestCase
         $items = collect([]);
 
         $items->push(new LeaderboardItem((object) [
+            'name' => 'Greg',
             'points' => 1,
             'user_id' => 1
         ]));

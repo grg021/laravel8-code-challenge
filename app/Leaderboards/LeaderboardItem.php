@@ -11,6 +11,11 @@ class LeaderboardItem
 {
 
     /**
+     * @var string
+     */
+    public string $name;
+
+    /**
      * @var int
      */
     public int $userId;
@@ -41,17 +46,9 @@ class LeaderboardItem
      */
     public function __construct($object)
     {
+        $this->name = $object->name;
         $this->userId = $object->user_id;
         $this->points = $object->points;
-    }
-
-    /**
-     * @return string
-     */
-    public function getTitle(): string
-    {
-        $user = User::find($this->userId);
-        return ($user) ? $user->name : '';
     }
 
     /**
