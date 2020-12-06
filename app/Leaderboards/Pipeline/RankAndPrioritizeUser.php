@@ -4,6 +4,7 @@ namespace App\Leaderboards\Pipeline;
 
 use App\Leaderboards\Leaderboard;
 use Closure;
+use Illuminate\Support\Collection;
 
 class RankAndPrioritizeUser implements Pipe
 {
@@ -29,14 +30,27 @@ class RankAndPrioritizeUser implements Pipe
 
         if ($pos > -1) {
             $rankItem = $content->rankItems[$pos];
-
-            $dups = $content->rankItems->where('rank', $rankItem->rank);
-
-            if ($dups->count() > 1 and $dups->first()->userId != $rankItem->userId) {
-                $content->rankItems->splice($pos, 1);
-                $content->rankItems->splice($dups->keys()->first(), 0, [$rankItem]);
-            }
+            $itemsWithSameRank = $content->rankItems->where('rank', $rankItem->rank);
+            $this->moveUserToTop($itemsWithSameRank, $rankItem, $content, $pos);
         }
         return $content;
+    }
+
+    /**
+     * @param  Collection  $itemsWithSameRank
+     * @param $rankItem
+     * @param  Leaderboard  $content
+     * @param  int  $pos
+     */
+    protected function moveUserToTop(
+        Collection $itemsWithSameRank,
+        $rankItem,
+        Leaderboard $content,
+        int $pos
+    ): void {
+        if ($itemsWithSameRank->count() > 1 and $itemsWithSameRank->first()->userId != $rankItem->userId) {
+            $content->rankItems->splice($pos, 1);
+            $content->rankItems->splice($itemsWithSameRank->keys()->first(), 0, [$rankItem]);
+        }
     }
 }

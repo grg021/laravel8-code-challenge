@@ -27,7 +27,7 @@ class AddPointDifference implements Pipe
         $pos = getUserPosition($content->rankItems, $content->userId);
         if ($pos > -1) {
             foreach ($content->rankItems as $key => $item) {
-                if ($item->userId != $content->rankItems[$pos]->userId && $key < $pos) {
+                if ($key < $pos) {
                     $item->points_diff = $item->points - $content->rankItems[$pos]->points;
                 }
             }

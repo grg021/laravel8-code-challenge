@@ -28,7 +28,6 @@ class HighlightUser implements Pipe
         if ($pos > -1) {
             $rankItem = $content->rankItems[$pos];
             $rankItem->highlight = 1;
-            $content->rankItems->splice($pos, 1, [$rankItem]);
         }
         return $content;
     }
