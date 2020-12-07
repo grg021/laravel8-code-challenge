@@ -2,7 +2,6 @@
 
 namespace Tests\RankingsTests;
 
-use App\Leaderboards\LeaderboardItem;
 use App\Models\Country;
 use App\Models\Course;
 use App\Models\CourseEnrollment;
@@ -10,7 +9,6 @@ use App\Models\User;
 use App\Leaderboards\CountryRanking;
 use App\Leaderboards\WorldRanking;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
-use Illuminate\Support\Collection;
 use Tests\TestCase;
 
 class RankingsQueryTest extends TestCase
@@ -37,9 +35,9 @@ class RankingsQueryTest extends TestCase
 
         $this->assertEquals(7, $list[0]->points);
         $this->assertEquals(5, $list[1]->points);
-        $this->assertEquals(3, $list[1]->userId);
-        $this->assertEquals(2, $list[2]->userId);
-        $this->assertEquals(4, $list[3]->userId);
+        $this->assertEquals(3, $list[1]->user_id);
+        $this->assertEquals(2, $list[2]->user_id);
+        $this->assertEquals(4, $list[3]->user_id);
     }
 
     /** @test */
@@ -95,43 +93,6 @@ class RankingsQueryTest extends TestCase
 
         $this->assertCount(6, CourseEnrollment::all());
         $this->assertCount(3, $query->get());
-    }
-
-    /** @test */
-    public function it_returns_a_collection_of_leaderboard_items()
-    {
-        $course = Course::factory()->create();
-        $quiz = $this->makeQuiz($course);
-
-        User::factory()->create();
-
-        $this->makeQuizAnswer(1, $quiz, 1);
-
-        $list = (new WorldRanking($course->id))->get();
-
-        $this->assertInstanceOf(Collection::class, $list);
-        $this->assertInstanceOf(LeaderboardItem::class, $list->first());
-
-    }
-
-    public function it_returns_ranked_list()
-    {
-        $course = Course::factory()->create();
-        $quiz = $this->makeQuiz($course);
-
-        User::factory()->count(4)->create();
-
-        $this->makeQuizAnswer(1, $quiz, 1);
-        $this->makeQuizAnswer(3, $quiz, 7);
-        $this->makeQuizAnswer(2, $quiz, 5);
-        $this->makeQuizAnswer(4, $quiz, 5);
-
-        $list = (new WorldRanking($course->id))->get();
-
-        $this->assertEquals(1, $list[0]->rank);
-        $this->assertEquals(2, $list[1]->rank);
-        $this->assertEquals(2, $list[2]->rank);
-        $this->assertEquals(3, $list[3]->rank);
     }
 
 }

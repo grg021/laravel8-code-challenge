@@ -17,7 +17,7 @@ class BottomSectionTest extends TestCase
         $items = collect([]);
 
         foreach (range(10, 1) as $n) {
-            $items->push(createLeaderboardItem($n, $n, '1'));
+            $items->push(createLeaderboardItemObj($n, $n, '1'));
         }
 
         $items = rank($items->sortByDesc('points')->values());
@@ -41,7 +41,7 @@ class BottomSectionTest extends TestCase
         $items = collect([]);
 
         foreach (range(10, 1) as $n) {
-            $items->push(createLeaderboardItem($n, $n, '1'));
+            $items->push(createLeaderboardItemObj($n, $n, '1'));
         }
 
         $items = rank($items->sortByDesc('points')->values());
@@ -67,7 +67,7 @@ class BottomSectionTest extends TestCase
         $items = collect([]);
 
         foreach (range(10, 1) as $n) {
-            $items->push(createLeaderboardItem($n, $n, '1'));
+            $items->push(createLeaderboardItemObj($n, $n, '1'));
         }
 
         $items = rank($items->sortByDesc('points')->values());

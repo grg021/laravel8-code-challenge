@@ -100,7 +100,7 @@ class RankHelperTest extends TestCase
     }
 
     /** @test */
-    public function it_returns_user_rank()
+    public function it_returns_user_rank_from_list_of_leaderboard_items()
     {
 
         $items = collect([]);

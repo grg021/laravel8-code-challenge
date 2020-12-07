@@ -15,6 +15,9 @@ class AddPointDifference implements Pipe
      */
     public function handle($content, Closure $next)
     {
+        if (!$content->userItem) {
+            return $next($content);
+        }
         return $next($this->execute($content));
     }
 
@@ -24,11 +27,13 @@ class AddPointDifference implements Pipe
      */
     protected function execute(Leaderboard $content): Leaderboard
     {
-        foreach ($content->rankItems as $key => $item) {
-            if ($key < $content->userKey) {
+
+        foreach ($content->rankItems as $item) {
+            if ($content->userItem->rank > $item->rank) {
                 $item->points_diff = $item->points - $content->userItem->points;
             }
         }
+
         return $content;
     }
 }

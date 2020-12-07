@@ -2,8 +2,8 @@
 
 namespace Tests\RankingsTests;
 
+use App\Exceptions\IncompatibleLeaderboardItem;
 use App\Leaderboards\LeaderboardImpl;
-use App\Leaderboards\LeaderboardItem;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
 
@@ -17,11 +17,7 @@ class LeaderboardImplTest extends TestCase
         $items = collect([]);
 
         foreach (range(10, 1) as $key => $item) {
-            $items->push(new LeaderboardItem((object) [
-                'name' => 'Greg',
-                'user_id' => $item,
-                'points' => '1',
-            ]));
+            $items->push(createLeaderboardItemObj($item, '1', '1'));
         }
 
         $query = new LeaderboardImpl();
@@ -55,13 +51,7 @@ class LeaderboardImplTest extends TestCase
         $items = collect([]);
 
         foreach (range(21, 1) as $key => $item) {
-            $item = new LeaderboardItem((object) [
-                'name' => 'Greg',
-                'user_id' => $item,
-                'points' => $item,
-            ]);
-            $item->rank = $key + 1;
-            $items->push($item);
+            $items->push(createLeaderboardItemObj($item, $item, $key + 1));
         }
         return [
             [clone $items, 21, 3, 3],
@@ -83,13 +73,7 @@ class LeaderboardImplTest extends TestCase
         $items = collect([]);
 
         foreach (range(21, 1) as $key => $item) {
-            $item = new LeaderboardItem((object) [
-                'name' => 'Greg',
-                'user_id' => $item,
-                'points' => $item,
-            ]);
-            $item->rank = $key + 1;
-            $items->push($item);
+            $items->push(createLeaderboardItemObj($item, $item, $key + 1));
         }
 
         $query = new LeaderboardImpl();
@@ -107,13 +91,7 @@ class LeaderboardImplTest extends TestCase
         $items = collect([]);
 
         foreach (range(3, 1) as $key => $item) {
-            $item = new LeaderboardItem((object) [
-                'name' => 'Greg',
-                'user_id' => $item,
-                'points' => 1,
-            ]);
-            $item->rank = 1;
-            $items->push($item);
+            $items->push(createLeaderboardItemObj($item, 1, 1));
         }
 
         $query = new LeaderboardImpl();
@@ -129,13 +107,7 @@ class LeaderboardImplTest extends TestCase
         $items = collect([]);
 
         foreach (range(2, 1) as $key => $item) {
-            $item = new LeaderboardItem((object) [
-                'name' => 'Greg',
-                'user_id' => $item,
-                'points' => 1,
-            ]);
-            $item->rank = 1;
-            $items->push($item);
+            $items->push(createLeaderboardItemObj($item, 1, 1));
         }
 
         $query = new LeaderboardImpl();
@@ -154,7 +126,7 @@ class LeaderboardImplTest extends TestCase
         $items = collect([]);
 
         foreach (range(10, 1) as $key => $item) {
-            $items->push(createLeaderboardItem($item, $item, $key + 1));
+            $items->push(createLeaderboardItemObj($item, $item, $key + 1));
         }
 
         $query = new LeaderboardImpl();
@@ -181,9 +153,9 @@ class LeaderboardImplTest extends TestCase
     {
         $items = collect([]);
 
-        $items->push(createLeaderboardItem(6, '6', '1'));
-        $items->push(createLeaderboardItem(5, '5', '2'));
-        $items->push(createLeaderboardItem(4, '4', '3'));
+        $items->push(createLeaderboardItemObj(6, '6', '1'));
+        $items->push(createLeaderboardItemObj(5, '5', '2'));
+        $items->push(createLeaderboardItemObj(4, '4', '3'));
 
         $query = new LeaderboardImpl();
         $query->initialize($items, 5);
@@ -193,5 +165,23 @@ class LeaderboardImplTest extends TestCase
         $this->assertEquals(1, $first[0]->points_diff);
         $this->assertEquals('0', $first[1]->points_diff);
         $this->assertEquals('0', $first[2]->points_diff);
+    }
+
+    /** @test */
+    public function it_throws_incompatible_exception()
+    {
+        $items = collect([]);
+
+        $items->push((object) ['foo' => 'bar']);
+
+        $query = new LeaderboardImpl();
+        try {
+            $query->initialize($items, 1);
+        } catch (IncompatibleLeaderboardItem $e) {
+            $this->assertEquals('bar', $items[0]->foo);
+            return;
+        }
+
+        $this->fail('It did not throw incompatible leaderboard exception.');
     }
 }

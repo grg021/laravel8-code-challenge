@@ -3,7 +3,6 @@
 namespace Tests\RankingsTests;
 
 use App\Leaderboards\LeaderboardImpl;
-use App\Leaderboards\LeaderboardItem;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
 
@@ -16,11 +15,7 @@ class LeaderboardTest extends TestCase
     {
         $items = collect([]);
 
-        $items->push(new LeaderboardItem((object) [
-            'name' => 'Greg',
-            'points' => 1,
-            'user_id' => 1
-        ]));
+        $items->push(createLeaderboardItemObj(1, 1, 1));
 
         $query = new LeaderboardImpl();
         $query->initialize($items, 1);

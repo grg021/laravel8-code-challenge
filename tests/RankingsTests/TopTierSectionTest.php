@@ -16,7 +16,7 @@ class TopTierSectionTest extends TestCase
         $items = collect([]);
 
         foreach (range(9, 1) as $key => $item) {
-            $items->push(createLeaderboardItem($item, '1', '1'));
+            $items->push(createLeaderboardItemObj($item, '1', '1'));
         }
 
         $query = new LeaderboardImpl();
@@ -33,7 +33,7 @@ class TopTierSectionTest extends TestCase
 
         $items = collect([]);
 
-        $items->push(createLeaderboardItem(6, '6', '1'));
+        $items->push(createLeaderboardItemObj(6, '6', '1'));
 
         $query = new LeaderboardImpl();
         $query->initialize($items, 6);
@@ -42,19 +42,19 @@ class TopTierSectionTest extends TestCase
         $this->assertCount(1, $sections);
         $this->assertCount(1, $sections->first());
 
-        $items->push(createLeaderboardItem(5, '5', '2'));
+        $items->push(createLeaderboardItemObj(5, '5', '2'));
         $query->initialize($items, 6);
         $sections = $query->build()->get()->getSections();
 
         $this->assertCount(1, $sections);
         $this->assertCount(2, $sections->first());
 
-        $items->push(createLeaderboardItem(4, '4', '3'));
+        $items->push(createLeaderboardItemObj(4, '4', '3'));
         $query->initialize($items, 6);
         $sections = $query->build()->get()->getSections();
 
         $this->assertCount(1, $sections);
         $this->assertCount(3, $sections->first());
-        $items->push(createLeaderboardItem(4, '4', '3'));
+        $items->push(createLeaderboardItemObj(4, '4', '3'));
     }
 }

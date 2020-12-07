@@ -45,7 +45,6 @@ class WorldRanking implements CourseRankings
             ->groupBy('quiz_answers.user_id')
             ->orderByDesc('points')
             ->orderBy('name')
-            ->get()
-            ->mapInto(LeaderboardItem::class);
+            ->get();
     }
 }

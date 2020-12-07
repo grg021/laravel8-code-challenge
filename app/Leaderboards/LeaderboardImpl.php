@@ -2,12 +2,14 @@
 
 namespace App\Leaderboards;
 
+use App\Exceptions\IncompatibleLeaderboardItem;
 use App\Leaderboards\Pipeline\AddPointDifference;
 use App\Leaderboards\Pipeline\BuildBottomBuildSection;
 use App\Leaderboards\Pipeline\BuildMiddleBuildSection;
 use App\Leaderboards\Pipeline\BuildTopBuildSection;
 use App\Leaderboards\Pipeline\HighlightUser;
 use App\Leaderboards\Pipeline\RankAndPrioritizeUser;
+use Exception;
 use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Collection;
 
@@ -23,10 +25,19 @@ class LeaderboardImpl implements LeaderboardBuilder
      * @param  Collection  $rankings
      * @param  int  $userId
      * @return LeaderboardBuilder
+     * @throws IncompatibleLeaderboardItem
      */
     public function initialize(Collection $rankings, int $userId): LeaderboardBuilder
     {
+
+        try {
+            $rankings = $rankings->mapInto(LeaderboardItem::class);
+        } catch (Exception $e) {
+            throw new IncompatibleLeaderboardItem();
+        }
+
         $this->leaderBoard = new Leaderboard($rankings, $userId);
+
         return $this;
     }
 

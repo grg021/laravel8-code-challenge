@@ -17,6 +17,9 @@ class HighlightUser implements Pipe
      */
     public function handle($content, Closure $next)
     {
+        if (!$content->userItem) {
+            return $next($content);
+        }
         return $next($this->execute($content));
     }
 
@@ -26,9 +29,9 @@ class HighlightUser implements Pipe
      */
     protected function execute(Leaderboard $content): Leaderboard
     {
-        if ($content->userKey > -1) {
-            $content->rankItems[$content->userKey]->highlight = 1;
-        }
+
+        $content->rankItems[$content->userKey]->highlight = 1;
+
         return $content;
     }
 }

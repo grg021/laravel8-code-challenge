@@ -14,7 +14,7 @@ class BuildMiddleBuildSection extends BuildSection
      */
     protected function getIndex(Collection $rankItems, int $userKey)
     {
-        return ($userKey > 4 && $userKey < $rankItems->count() - 4) ? $userKey - 1 : 0;
+        return $userKey - 1;
     }
 
     /**
