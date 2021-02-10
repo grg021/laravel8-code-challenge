@@ -16,21 +16,7 @@ use Illuminate\Http\RedirectResponse;
 class CourseEnrollmentController extends Controller
 {
 
-    /**
-     * @var LeaderboardBuilder
-     */
-    private LeaderboardBuilder $sectionsBuilder;
-
-    /**
-     * CourseEnrollmentController constructor.
-     * @param  LeaderboardBuilder  $sectionsBuilder
-     */
-    public function __construct(LeaderboardBuilder $sectionsBuilder)
-    {
-        $this->sectionsBuilder = $sectionsBuilder;
-    }
-
-    public function show(string $courseSlug): Renderable
+    public function show(string $courseSlug, LeaderboardBuilder $builder): Renderable
     {
         $user = auth()->user();
         /** @var Course $course */
@@ -47,11 +33,17 @@ class CourseEnrollmentController extends Controller
             return view('courses.show', ['course' => $course]);
         }
 
-        $worldLeaderboard = (new LeaderBoardFactory($this->sectionsBuilder))
-            ->getLeaderboard((new WorldRanking($course->id)), $user->id);
+        $worldLeaderboard = LeaderBoardFactory::getLeaderboard(
+            $builder,
+            $user,
+            (new WorldRanking($course->id))
+        );
+        $countryLeaderboard = LeaderBoardFactory::getLeaderboard(
+            $builder,
+            $user,
+            (new CountryRanking($course->id, $user->country_code))
+        );
 
-        $countryLeaderboard = (new LeaderBoardFactory($this->sectionsBuilder))
-            ->getLeaderboard((new CountryRanking($course->id, $user->country_code)), $user->id);
 
         return view('courseEnrollments.show', [
                 'enrollment' => $enrollment,

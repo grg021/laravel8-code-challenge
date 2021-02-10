@@ -2,34 +2,29 @@
 
 namespace App\Leaderboards;
 
+use App\Models\Course;
+use Illuminate\Contracts\Auth\Authenticatable;
+
 class LeaderBoardFactory
 {
 
     /**
-     * @var LeaderboardBuilder
-     */
-    private LeaderboardBuilder $builder;
-
-    /**
-     * LeaderBoardFactory constructor.
      * @param  LeaderboardBuilder  $builder
-     */
-    public function __construct(LeaderboardBuilder $builder)
-    {
-        $this->builder = $builder;
-    }
-
-    /**
+     * @param  Authenticatable  $user
      * @param  CourseRankings  $rankings
-     * @param $userId
      * @return Leaderboard
      */
-    public function getLeaderboard(CourseRankings $rankings, $userId): Leaderboard
-    {
+    public static function getLeaderboard(
+        LeaderboardBuilder $builder,
+        Authenticatable $user,
+        WorldRanking $rankings
+    ): Leaderboard {
         $rankList = $rankings->get();
-        return $this->builder
+        $userId = ($user->getAuthIdentifier()) ? $user->getAuthIdentifier() : 0;
+        return $builder
             ->initialize($rankList, $userId)
             ->build()
             ->get();
     }
+
 }

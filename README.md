@@ -1,4 +1,4 @@
-# Welcome to the IxDF Back-End Code Challenge!
+# Back-End Code Challenge using Laravel 8!
 
 The main goal of this challenge is to get a sense of your coding style and choices.
 
@@ -127,17 +127,3 @@ The password for all auto-generated users is `secret`.
 
 After a successful login, you will be redirected to a page with a list of links to your course enrollments.
 Please click any of the links, and you will be redirected to a page where you should implement your this challenge, i.e. the leaderboard.
-
-
-## How to submit your solution
-
-Please submit your solution in a git repository.
-Ideally, you should make an initial commit with the files of this code challenge and then build your solution upon that.
-
-You can submit your solution in 2 ways:
- 1. Use a **private** GitHub repository and send us an invitation for [IxDF-bot](https://github.com/ixdf-bot). **Preferable way**.
- 2. Use a **public** GitHub repository and send us the link.
- 
-PS: We at IxDF would greatly appreciate if you give us some feedback about this code-challenge :)
-
-🦄

@@ -6,7 +6,7 @@ use App\Leaderboards\Leaderboard;
 use Closure;
 use Illuminate\Support\Collection;
 
-class BuildSection implements Pipe
+abstract class BuildSection implements Pipe
 {
     protected const MIN_SIZE = 3;
     protected const MAX_SIZE = 9;
